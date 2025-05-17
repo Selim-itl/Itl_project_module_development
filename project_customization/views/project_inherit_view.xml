@@ -2,7 +2,7 @@
 
 <odoo>
 
-<!--    customizations of kanban view-->
+    <!--    customizations of kanban view-->
     <record id="project_kanban_inherit_custom" model="ir.ui.view">
         <field name="name">project.project.kanban.inherit.custom</field>
         <field name="model">project.project</field>
@@ -12,7 +12,7 @@
             <xpath expr="//div[contains(@class,'o_project_kanban_boxes')]" position="after">
                 <div>
                     <span class="o_value"><field name="progress"/>%</span>
-<!--                    <span class="o_label ms-1"><t t-esc="record.progress.value"/></span>-->
+                    <!--                    <span class="o_label ms-1"><t t-esc="record.progress.value"/></span>-->
                 </div>
             </xpath>
 
@@ -20,7 +20,7 @@
     </record>
 
 
-<!--    customizations of form view-->
+    <!--    customizations of form view-->
     <record id="view_project_form_inherit_custom" model="ir.ui.view">
         <field name="name">project.form.inherit.custom</field>
         <field name="model">project.project</field>

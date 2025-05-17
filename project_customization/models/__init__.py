@@ -1,1 +1,1 @@
-from . import Project_inherit
+from . import Project_inherit, Project_task_inherit

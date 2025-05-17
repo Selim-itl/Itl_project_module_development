@@ -11,3 +11,6 @@ class ProjectProject(models.Model):
     total_task = fields.Integer("Total Task")
     completed_task = fields.Integer("Completed Task")
     sub_task = fields.Integer("Sub Task")
+
+    def btn_action(self):
+        return
