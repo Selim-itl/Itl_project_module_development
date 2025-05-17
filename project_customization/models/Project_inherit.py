@@ -10,4 +10,4 @@ class ProjectProject(models.Model):
     days_allocated = fields.Integer("Allocated days")
     total_task = fields.Integer("Total Task")
     completed_task = fields.Integer("Completed Task")
-    sub_task = fields.Integer("sub Task")
+    sub_task = fields.Integer("Sub Task")

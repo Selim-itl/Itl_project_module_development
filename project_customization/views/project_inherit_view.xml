@@ -1,18 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <odoo>
+
+    <record id="project_kanban_inherit_custom" model="ir.ui.view">
+        <field name="name">project.project.kanban.inherit.custom</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_kanban"/> <!-- use actual base kanban view ID -->
+        <field name="arch" type="xml">
+
+            <xpath expr="//div[contains(@class,'o_project_kanban_boxes')]" position="after">
+                <div>
+                    <span class="o_value"><field name="progress"/>%</span>
+<!--                    <span class="o_label ms-1"><t t-esc="record.progress.value"/></span>-->
+                </div>
+            </xpath>
+
+        </field>
+    </record>
+
+
     <record id="view_project_form_inherit_custom" model="ir.ui.view">
         <field name="name">project.form.inherit.custom</field>
         <field name="model">project.project</field>
         <field name="inherit_id" ref="project.edit_project"/>
         <field name="arch" type="xml">
 
+            <!--             &lt;!&ndash; Hide the first Share button &ndash;&gt;-->
+            <xpath expr="//button[@name='410'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!--            &lt;!&ndash; Hide the second Share button &ndash;&gt;-->
+            <xpath expr="//button[@name='410'][2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
             <xpath expr="//field[@name='tag_ids']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//button[@name='411']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
 
             <xpath expr="//page[@name='settings']" position="attributes">
                 <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="estimated_cost"/>
+                <field name="actual_cost"/>
+            </xpath>
+
+            <xpath expr="//div[@name='dates']" position="after">
+                <field name="members" string="Members" widget="many2many_tags"/>
+                <field name="progress"/>
+            </xpath>
+
+            <xpath expr="//page[@name='description']" position="before">
+                <page name="statistics" string="Statistics">
+                    <group>
+                        <field name="days_allocated"/>
+                        <field name="total_task"/>
+                        <field name="completed_task"/>
+                        <field name="sub_task"/>
+                    </group>
+                </page>
             </xpath>
 
         </field>
