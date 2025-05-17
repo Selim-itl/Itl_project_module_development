@@ -1,8 +1,9 @@
 {
     'name': 'Project Customization',
-    'depends': ['project'],
+    'depends': ['base','project'],
     'data': [
         'views/project_inherit_view.xml',
+        'views/project_task_action.xml',
     ],
     'installable': True,
 }

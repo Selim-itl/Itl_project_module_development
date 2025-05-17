@@ -2,6 +2,7 @@
 
 <odoo>
 
+<!--    customizations of kanban view-->
     <record id="project_kanban_inherit_custom" model="ir.ui.view">
         <field name="name">project.project.kanban.inherit.custom</field>
         <field name="model">project.project</field>
@@ -19,6 +20,7 @@
     </record>
 
 
+<!--    customizations of form view-->
     <record id="view_project_form_inherit_custom" model="ir.ui.view">
         <field name="name">project.form.inherit.custom</field>
         <field name="model">project.project</field>

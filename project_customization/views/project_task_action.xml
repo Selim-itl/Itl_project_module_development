@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+<!--    activating default groud by-->
+    <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
+        <field name="context">{'search_default_groupby_ancestor_task':1}</field>
+    </record>
+
+<!--    re-odering sequence-->
+    <record id="project.project_task_kanban_action_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="20"/>
+    </record>
+<!--re-odering sequence-->
+    <record id="project.project_task_tree_action_view" model="ir.actions.act_window.view">
+        <field name="sequence" eval="10"/>
+    </record>
+
+</odoo>
