@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <!--    activating default groud by-->
+        <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
+            <field name="context">{'search_default_groupby_ancestor_task':1}</field>
+        </record>
+
+        <!--    re-odering sequence-->
+        <record id="project.project_task_kanban_action_view" model="ir.actions.act_window.view">
+            <field name="sequence" eval="20"/>
+        </record>
+
+        <!--re-odering sequence-->
+        <record id="project.project_task_tree_action_view" model="ir.actions.act_window.view">
+            <field name="sequence" eval="10"/>
+        </record>
+
+        <record id="view_project_task_tree_inherit_custom" model="ir.ui.view">
+            <field name="name">project.task.free.inherit.custom</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_tree2"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='activity_ids']" position="after">
+                    <field name="ancestor_progress_ratio" widget="progressbar"/>
+                    <field name="subtask_status"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="view_project_task_form_inherit_custom" model="ir.ui.view">
+            <field name="name">project.task.form.inherit.custom</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='user_ids']" position="after">
+                    <field name="is_subtask" widget="boolean_toggle"/>
+                    <field name="subtask_status"/>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('is_subtask', '=', True)]}</attribute>
+                </xpath>
+
+            </field>
+        </record>
+
+    </data>
+</odoo>

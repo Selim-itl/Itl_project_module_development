@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en-US" data-website-id="1" data-oe-company-name="Odoo S.A.">
+
+<head>
+
+    <link type="text/css" rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"/>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.js"
+            integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+          integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <link href="https://fonts.googleapis.com/css2?family=Halant:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+            crossorigin="anonymous"></script>
+
+    <!--    <link type="text/css" rel="stylesheet" href="/description.css"/>-->
+    <style>
+        * {
+            font-family: "Victor Mono";
+        }
+        .ag-format-container {
+            width: 1142px;
+            margin: 0 auto;
+        }
+
+        .ag-courses_box {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: start;
+            -ms-flex-align: start;
+            align-items: flex-start;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+
+            padding: 50px 0;
+        }
+
+        .ag-courses_item {
+            -ms-flex-preferred-size: calc(33.33333% - 30px);
+            flex-basis: calc(33.33333% - 30px);
+
+            margin: 0 15px 25px;
+
+            overflow: hidden;
+
+            border-radius: 28px;
+        }
+
+        .ag-courses-item_link {
+            display: block;
+            padding: 30px 20px;
+            background-color: #121212;
+
+            overflow: hidden;
+
+            position: relative;
+        }
+
+        .ag-courses-item_link:hover,
+        .ag-courses-item_link:hover .ag-courses-item_date {
+            text-decoration: none;
+            color: #FFF;
+        }
+
+        .ag-courses-item_link:hover .ag-courses-item_bg {
+            -webkit-transform: scale(10);
+            -ms-transform: scale(10);
+            transform: scale(10);
+        }
+
+        .ag-courses-item_title {
+            min-height: 80px;
+            margin: 0 0 25px;
+
+            overflow: hidden;
+
+            font-weight: bold;
+            font-size: 18px;
+            color: #FFF;
+
+            z-index: 2;
+            position: relative;
+        }
+
+        .ag-courses-item_date-box {
+            font-size: 18px;
+            color: #FFF;
+
+            z-index: 2;
+            position: relative;
+        }
+
+        .ag-courses-item_date {
+            font-weight: bold;
+            color: #f9b234;
+
+            -webkit-transition: color .5s ease;
+            -o-transition: color .5s ease;
+            transition: color .5s ease
+        }
+
+        .ag-courses-item_bg {
+            height: 128px;
+            width: 128px;
+            background-color: #f9b234;
+
+            z-index: 1;
+            position: absolute;
+            top: -75px;
+            right: -75px;
+
+            border-radius: 50%;
+
+            -webkit-transition: all .5s ease;
+            -o-transition: all .5s ease;
+            transition: all .5s ease;
+        }
+
+        .ag-courses_item:nth-child(2n) .ag-courses-item_bg {
+            background-color: #3ecd5e;
+        }
+
+        .ag-courses_item:nth-child(3n) .ag-courses-item_bg {
+            background-color: #e44002;
+        }
+
+        .ag-courses_item:nth-child(4n) .ag-courses-item_bg {
+            background-color: #952aff;
+        }
+
+        .ag-courses_item:nth-child(5n) .ag-courses-item_bg {
+            background-color: #cd3e94;
+        }
+
+        .ag-courses_item:nth-child(6n) .ag-courses-item_bg {
+            background-color: #4c49ea;
+        }
+
+
+        @media only screen and (max-width: 979px) {
+            .ag-courses_item {
+                -ms-flex-preferred-size: calc(50% - 30px);
+                flex-basis: calc(50% - 30px);
+            }
+
+            .ag-courses-item_title {
+                font-size: 24px;
+            }
+        }
+
+        @media only screen and (max-width: 767px) {
+            .ag-format-container {
+                width: 96%;
+            }
+
+        }
+
+        @media only screen and (max-width: 639px) {
+            .ag-courses_item {
+                -ms-flex-preferred-size: 100%;
+                flex-basis: 100%;
+            }
+
+            .ag-courses-item_title {
+                min-height: 72px;
+                line-height: 1;
+
+                font-size: 24px;
+            }
+
+            .ag-courses-item_link {
+                padding: 22px 40px;
+            }
+
+            .ag-courses-item_date-box {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="module-description" style="font-family: 'Victor Mono'";>
+    <!-- Keep From Here -->
+    <div class="container">
+        <div class="oe_styling_v8">
+            <img class="img img-responsive center-block"
+                 style="border-top-left-radius:10px; border-top-right-radius:10px"
+                 src="">
+            <!-- blog post starts -->
+
+            <section class="blog_post_01" style="border: 2px solid #1717cc;border-radius: 10px;">
+                <div class="position-relative w-100" style="display: inline-grid;">
+
+                    <div class="position-relative row justify-content-center align-items-center"
+                         style="padding: 20px 10px 20px 10px;">
+                        <div class="col-12 my-3 px-5">
+                            <div class="header-img">
+                                <img src="assets/image/hero_top.jpg" class="img img-fluid w-100"
+                                     style="width: 100% !important;"/>
+
+                            </div>
+
+                            <div class="blg-01-content text-center" style="margin-top: 65px;">
+                                <h1 style="font-family: 'Inter', sans-serif; font-size: 55px; font-weight: 700;line-height: 61px;color: #151765;margin-bottom: 0 !important;">
+                                    CRM Leads Quick Preview
+                                </h1>
+                                <h1 style="font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 600;line-height: 41px;color: #4267C8;">
+                                    Developed By: MindSynth Technologies
+                                </h1>
+                                <p style="font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 500;line-height: 27px; color: #000000; margin-top: 20px;">
+                                    The module provides an option to quickly preview a lead from the Kanban or
+                                    Pipeline view.
+                                </p>
+                            </div>
+
+                            <div class="features px-5 mx-5" style="margin-top: 70px;">
+                                <div class="row justify-content-center">
+                                    <div class="col-xl-6 d-flex justify-content-end my-1">
+                                        <div class="box"
+                                             style="background-color: #151765; border-radius: 10px; padding: 10px 20px; width: 420px;">
+                                            <h4 style="font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 500;line-height: 27px;color: #fff;margin-bottom: 0 !important;">
+                                                Quick View Icon
+                                            </h4>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 d-flex justify-content-start my-1">
+                                        <div class="box"
+                                             style="background-color: #151765; border-radius: 10px; padding: 10px 20px; width: 420px;">
+                                            <h4 style="font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 500;line-height: 27px;color: #fff;margin-bottom: 0 !important;">
+                                                Lead details form view wizard
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- blog post ends -->
+
+            <!-- features highlight -->
+
+            <section class="blog_post_01" style="border: 2px solid #1717cc;border-radius: 10px;">
+                <div class="position-relative w-100" style="display: inline-grid;">
+                    <div class="position-relative row justify-content-center align-items-center"
+                         style="padding: 40px 20px 40px 20px;">
+                        <div class="col-12 my-3 px-5">
+
+                            <div class="mt-2">
+                                <div class="content-note d-flex ">
+                                    <div class="icon-img">
+                                    </div>
+                                    <div class="content" style="margin-left: 15px !important;">
+                                        <p style="font-family: 'Inter', sans-serif; font-size: 25px; font-weight: 600;line-height: 26px;color: #151765;">
+                                            Quick View Icon Button
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="content-img text-center mt-3 mx-5" style="border-radius: 10px;">
+                                    <img src="assets/image/1.png" class="img img-fluid img-responsive"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <br/>
+            <section class="blog_post_01" style="border: 2px solid #1717cc;border-radius: 10px;">
+                <div class="position-relative w-100" style="display: inline-grid;">
+
+                    <div class="position-relative row justify-content-center align-items-center"
+                         style="padding: 40px 20px 40px 20px;">
+                        <div class="col-12 my-3 px-5">
+
+                            <div class="mt-2">
+                                <div class="content-note d-flex ">
+                                    <div class="icon-img">
+                                    </div>
+                                    <div class="content" style="margin-left: 15px !important;">
+                                        <p style="font-family: 'Inter', sans-serif; font-size: 25px; font-weight: 600;line-height: 26px;color: #151765;">
+                                            Details Wizard Form
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="content-img text-center mt-3 mx-5" style="border-radius: 10px;">
+                                    <img src="assets/image/2.png" class="img img-fluid img-responsive"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <br/>
+            <div class="container py-5" style="border: 2px solid #1717cc;border-radius: 10px;">
+                <h1 class="text-center mb-5 fw-bold">Our Services</h1>
+                <div class="row g-4">
+
+                    <!-- ERP Solutions -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0" >
+                            <div class="card-body" style="border: 4px solid #0becb7;border-radius: 10px;">
+                                <h5 class="card-title"><b>Comprehensive ERP Solutions</b></h5>
+                                <p class="card-text">Our expert team designs and implements tailored ERP solutions that
+                                    optimize your business operations—from inventory management to financial
+                                    reporting—with real-time insights and enhanced collaboration.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BPA -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body" style="border: 4px solid #0becb7;border-radius: 10px;">
+                                <h5 class="card-title"><b>Business Process Automation</b></h5>
+                                <p class="card-text">Boost efficiency by automating repetitive tasks. Our custom-built
+                                    software fits seamlessly into your workflow, letting your team focus on strategic
+                                    goals while maximizing productivity.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Web & Mobile -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body" style="border: 4px solid #0becb7;border-radius: 10px;">
+                                <h5 class="card-title"><b>Web & Mobile App Development</b></h5>
+                                <p class="card-text">Bring your ideas to life with innovative, user-friendly
+                                    applications. We build seamless, responsive apps for web and mobile platforms,
+                                    ensuring a smooth user experience.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cloud & Security -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body" style="border: 4px solid #0becb7;border-radius: 10px;">
+                                <h5 class="card-title"><b>Cloud & Cybersecurity Services</b></h5>
+                                <p class="card-text">Protect your digital infrastructure with advanced security
+                                    solutions. We offer vulnerability assessments, real-time monitoring, and fast
+                                    incident response to secure your data.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IT Consultancy -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body" style="border: 4px solid #0becb7;border-radius: 10px;">
+                                <h5 class="card-title"><b>Expert IT & ITES Consultancy</b></h5>
+                                <p class="card-text">Get expert guidance on how to align your technology investments
+                                    with business goals. We help you implement the right tools to drive innovation and
+                                    efficiency.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Digital Marketing -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body" style="border: 4px solid #0becb7;border-radius: 10px;">
+                                <h5 class="card-title"><b>Digital Marketing & Growth</b></h5>
+                                <p class="card-text">Expand your digital reach through SEO, content marketing, and
+                                    social media strategies. We help you grow your brand and achieve measurable online
+                                    results.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Odoo Services -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-body" style="border: 4px solid #0becb7;border-radius: 10px;">
+                                <h5 class="card-title"><b>Odoo Services</b></h5>
+                                <p class="card-text">We offer Odoo implementation, training, and migration services.
+                                    Streamline your operations with a scalable, customizable ERP platform tailored to
+                                    your needs.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row pb16 pt48 mb-5">
+                <div class="alert alert-warning text-center w-100" style="
+							padding: 21px 51px;
+							background-color: #ffffff;
+							border: 1px solid #dee2e6;
+							color: #414d5c;
+							margin: auto;
+							display: block;
+							border-radius: 1px;
+							min-width: 90%;
+							border-top: 3px solid #E5202B;
+						">
+                    <div>
+                        <div style="
+									background-color: rgb(255 164 0 / 12%);
+									color: #E5202B;
+								" class="badge border-0 rounded-circle p-3">
+                            <i class="fa fa-question-circle fa-2x"></i>
+                        </div>
+                    </div>
+                    <h2 style="color: #3c4858" class="mt-2 mb-4">
+                        Need a help for this module?
+                    </h2>
+                    <h4 style="color: #3c4858; font-weight: 400" class="mt-2 mb-4">
+                        Contact us
+                        <b style="
+								color: #25282D;
+								background-color: #e0f0ff;
+								padding: 3px 10px;
+								border-radius: 3px;
+							">info@mindsynthtech.com
+                        </b>
+                        for your queries
+                    </h4>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
