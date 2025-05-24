@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="action_view_om_tags" model="ir.actions.act_window">
+            <field name="name">Tags</field>
+            <field name="res_model">hospital.tags</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    <menuitem
+            id="menu_hospital_tag"
+            name="Tags"
+            parent="menu_hospital_configuration"
+            action="action_view_om_tags"
+            sequence="4"
+    />
+
+</odoo>

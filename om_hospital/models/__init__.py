@@ -1,1 +1,1 @@
-from . import doctor, Patient, Appointment
+from . import doctor, Patient, Appointment, Tags, Room

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from email.policy import default
 
 from odoo import models, fields, api
 
@@ -20,39 +21,40 @@ class InheritCRMKanbanView(models.Model):
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'
-    _order = 'id'
+    _order = "id"
 
-    is_subtask = fields.Boolean("Is sub-task?", default="False")
-    subtask_status = fields.Selection([
-        ('0', 'In Progress'),
-        ('100', 'Completed')
-    ], string="Status", compute='_compute_subtask_status', inverse='_inverse_subtask_status', store=True, recursive=True)
+    task_stages = fields.Selection([
+        ('not_started', 'Not started'),
+        ('in_progress', 'In progress'),
+        ('completed', 'Done')], default='not_started')
 
-    ancestor_progress_ratio = fields.Float(
+    progress_value = fields.Integer(
         string="Progress (%)",
-        compute='_compute_progress_ratio',
-        store=False
+        compute='_onchange_progress',
+        store=True,
+        readonly=False,  # Allows manual editing for parent tasks
+        # recursive=True,
+        group_operator=False
     )
 
-    @api.depends('child_ids.subtask_status')
-    def _compute_subtask_status(self):
-        for task in self:
-            if task.child_ids:
-                total = len(task.child_ids)
-                done = len(task.child_ids.filtered(lambda c: c.subtask_status == '100'))
-                task.subtask_status = '100' if done == total else '0'
-            # Do NOT auto-change if it's a sub-task (let user control it manually)
+# Method is got getting executed
 
-    def _inverse_subtask_status(self):
-        # Let user manually change status for leaf tasks
-        pass
 
-    @api.depends('child_ids.subtask_status', 'subtask_status')
-    def _compute_progress_ratio(self):
-        for task in self:
-            if task.child_ids:
-                total = len(task.child_ids)
-                done = len(task.child_ids.filtered(lambda c: c.subtask_status == '100'))
-                task.ancestor_progress_ratio = (done / total) * 100.0
-            else:
-                task.ancestor_progress_ratio = 100.0 if task.subtask_status == '100' else 0.0
+    @api.onchange('progress_value')
+    def _onchange_progress(self):
+        for task in self: #Going through all tasks and sub-tasks
+            if task.child_ids: #collecting only these task which are having sub-tasks
+                print("Method executed")
+                for sub_task in task: #Going through each of these parent tasks to get sub-tasks ids
+                    # print("Sub-task ids : ", sub_task.child_ids) #Getting sub-tasks ids
+                    subtask_progress = task.child_ids.mapped('progress_value')
+                    valid_progress = [p for p in subtask_progress if isinstance(p, (int, float))]
+
+                    if valid_progress:  # Only calculate if we have valid numbers
+                        task.progress_value = round(sum(valid_progress) / len(valid_progress))
+                        print("task.progress_value : ", task.progress_value)
+                    else: #if not valid progress
+                        task.progress_value = 0  # Default if no valid progress
+                        print("Zero value set! ")
+            else:#setting value for the tasks which are sub-tasks
+                continue

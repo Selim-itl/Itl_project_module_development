@@ -7,12 +7,12 @@
             <field name="context">{'search_default_groupby_ancestor_task':1}</field>
         </record>
 
-        <!--    re-odering sequence-->
+        <!--    re-ordering kanban view sequence -->
         <record id="project.project_task_kanban_action_view" model="ir.actions.act_window.view">
             <field name="sequence" eval="20"/>
         </record>
 
-        <!--re-odering sequence-->
+        <!--re-ordering tree view sequence-->
         <record id="project.project_task_tree_action_view" model="ir.actions.act_window.view">
             <field name="sequence" eval="10"/>
         </record>
@@ -24,8 +24,8 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='activity_ids']" position="after">
-                    <field name="ancestor_progress_ratio" widget="progressbar"/>
-                    <field name="subtask_status"/>
+                    <field name="progress_value" widget="progressbar"/>
+                    <field name="task_stages"/>
                 </xpath>
 
             </field>
@@ -37,13 +37,20 @@
             <field name="inherit_id" ref="project.view_task_form2"/>
             <field name="arch" type="xml">
 
+                <xpath expr="//field[@name='task_properties']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
                 <xpath expr="//field[@name='user_ids']" position="after">
-                    <field name="is_subtask" widget="boolean_toggle"/>
-                    <field name="subtask_status"/>
+                    <field name="task_stages"/>
+                </xpath>
+
+                <xpath expr="//field[@name='tag_ids']" position="after">
+                    <field name="progress_value" attrs="{'invisible': [('task_stages','!=','in_progress')]}"/>
                 </xpath>
 
                 <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
-                    <attribute name="attrs">{'invisible': [('is_subtask', '=', True)]}</attribute>
+                    <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
 
             </field>

@@ -12,8 +12,9 @@
                             <field name="ref">ref-</field>
                             <field name="patient_id"/>
                             <field name="doctor_id"/>
-                            <field name="room"/>
                             <field name="date"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
+                            <field name="room_id"/>
                         </group>
                     </group>
                 </sheet>
@@ -29,8 +30,9 @@
                 <field name="ref"/>
                 <field name="patient_id"/>
                 <field name="doctor_id"/>
-                <field name="room"/>
                 <field name="date"/>
+                <field name="tag_ids" widget="many2many_tags"/>
+                <field name="room_id"/>
             </tree>
         </field>
     </record>
