@@ -1,3 +1,4 @@
+#Updated code written at the morning of 25 May 8:00 AM
 # -*- coding: utf-8 -*-
 from email.policy import default
 
@@ -8,6 +9,19 @@ class InheritCRMKanbanView(models.Model):
     _inherit = 'project.project'
     _description = 'Project project'
 
+    project_progress = fields.Integer(
+        string="Project Progress",
+        compute="_compute_project_progress",
+        help="Average progress of all tasks in this project.",
+    )
+
+    @api.depends('task_ids.task_progress')
+    def _compute_project_progress(self):
+        for project in self:
+            top_tasks = project.task_ids.filtered(lambda t: not t.parent_id and t.task_progress is not None)
+            total = sum(t.task_progress for t in top_tasks)
+            count = len(top_tasks)
+            project.project_progress = round(total / count, 2) if count else 0.0
 
     def action_open_form_view(self):
         self.ensure_one()  # Ensure only one record is processed
@@ -23,38 +37,38 @@ class ProjectTask(models.Model):
     _inherit = 'project.task'
     _order = "id"
 
+    task_start_date = fields.Date(string='Start date')
     task_stages = fields.Selection([
         ('not_started', 'Not started'),
         ('in_progress', 'In progress'),
         ('completed', 'Done')], default='not_started')
 
-    progress_value = fields.Integer(
-        string="Progress (%)",
-        compute='_onchange_progress',
-        store=True,
-        readonly=False,  # Allows manual editing for parent tasks
+    sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0)
+
+    task_progress = fields.Integer(
+        string="Task Progress (%)",
+        compute='_onchange_task_progress',
+        # store=False,
+        # readonly=True,  # Allows manual editing for parent tasks
         # recursive=True,
-        group_operator=False
+        # group_operator=False
     )
 
-# Method is got getting executed
+    @api.depends('child_ids.sub_task_progress')
+    def _onchange_task_progress(self):
+        for task in self:
+            if task.child_ids:
+                total = len(task.child_ids)
+                total_progress = sum(child.sub_task_progress for child in task.child_ids)
+                task.task_progress = round(total_progress / total, 2) if total else 0.0
 
-
-    @api.onchange('progress_value')
-    def _onchange_progress(self):
-        for task in self: #Going through all tasks and sub-tasks
-            if task.child_ids: #collecting only these task which are having sub-tasks
-                print("Method executed")
-                for sub_task in task: #Going through each of these parent tasks to get sub-tasks ids
-                    # print("Sub-task ids : ", sub_task.child_ids) #Getting sub-tasks ids
-                    subtask_progress = task.child_ids.mapped('progress_value')
-                    valid_progress = [p for p in subtask_progress if isinstance(p, (int, float))]
-
-                    if valid_progress:  # Only calculate if we have valid numbers
-                        task.progress_value = round(sum(valid_progress) / len(valid_progress))
-                        print("task.progress_value : ", task.progress_value)
-                    else: #if not valid progress
-                        task.progress_value = 0  # Default if no valid progress
-                        print("Zero value set! ")
-            else:#setting value for the tasks which are sub-tasks
-                continue
+                # Update task_stages
+                progresses = [child.sub_task_progress for child in task.child_ids]
+                if all(p == 100 for p in progresses):
+                    task.task_stages = 'completed'
+                elif any(p > 0 for p in progresses):
+                    task.task_stages = 'in_progress'
+                else:
+                    task.task_stages = 'not_started'
+            else:
+                task.task_progress = 0.0

@@ -24,7 +24,8 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='activity_ids']" position="after">
-                    <field name="progress_value" widget="progressbar"/>
+                    <field name="sub_task_progress" widget="progressbar"/>
+                    <field name="task_progress" widget="percentpie"/>
                     <field name="task_stages"/>
                 </xpath>
 
@@ -41,12 +42,17 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
+                <xpath expr="//field[@name='date_deadline']" position="before">
+                    <field name="task_start_date"/>
+                </xpath>
+
                 <xpath expr="//field[@name='user_ids']" position="after">
                     <field name="task_stages"/>
                 </xpath>
 
                 <xpath expr="//field[@name='tag_ids']" position="after">
-                    <field name="progress_value" attrs="{'invisible': [('task_stages','!=','in_progress')]}"/>
+                    <field name="sub_task_progress" attrs="{'invisible': ['|',('task_stages','!=','in_progress'), ('parent_id','=', False)]}"/>
+                    <field name="task_progress" attrs="{'invisible': ['|',('task_stages','!=','in_progress'),('parent_id','!=', False)]}"/>
                 </xpath>
 
                 <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
