@@ -24,7 +24,7 @@
             <field name="arch" type="xml">
 
                 <xpath expr="//field[@name='activity_ids']" position="after">
-                    <field name="sub_task_progress" widget="progressbar"/>
+                    <field name="sub_task_progress" widget="progressbar" string="Sub-task"/>
                     <field name="task_progress" widget="percentpie"/>
                     <field name="task_stages"/>
                 </xpath>
@@ -48,6 +48,7 @@
 
                 <xpath expr="//field[@name='user_ids']" position="after">
                     <field name="task_stages"/>
+                    <field name="working_days" string="Available days"/>
                 </xpath>
 
                 <xpath expr="//field[@name='tag_ids']" position="after">

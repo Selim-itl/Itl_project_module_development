@@ -3,9 +3,9 @@
 from email.policy import default
 
 from odoo import models, fields, api
+from datetime import timedelta
 
-
-class InheritCRMKanbanView(models.Model):
+class ProjectProject(models.Model):
     _inherit = 'project.project'
     _description = 'Project project'
 
@@ -48,11 +48,27 @@ class ProjectTask(models.Model):
     task_progress = fields.Integer(
         string="Task Progress (%)",
         compute='_onchange_task_progress',
-        # store=False,
-        # readonly=True,  # Allows manual editing for parent tasks
-        # recursive=True,
         # group_operator=False
     )
+
+    working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
+
+    @api.depends('task_start_date', 'date_deadline')
+    def _compute_working_days(self):
+        for task in self:
+            start_date = task.task_start_date
+            end_date = task.date_deadline
+            if start_date and end_date and start_date <= end_date:
+                current_date = start_date
+                count = 0
+                while current_date <= end_date:
+                    # weekday() Monday=0 ... Sunday=6
+                    if current_date.weekday() != 4:  # 4 is Friday
+                        count += 1
+                    current_date += timedelta(days=1)
+                task.working_days = count
+            else:
+                task.working_days = 0
 
     @api.depends('child_ids.sub_task_progress')
     def _onchange_task_progress(self):
