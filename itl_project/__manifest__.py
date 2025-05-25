@@ -7,6 +7,7 @@
     'data': [
         'views/project_kanban_inherit.xml',
         'views/project_task_inherit_view.xml',
+        'views/hr_timesheet_inherit_view.xml',
     ],
     'images': [
         'static/description/app-banner.jpg'

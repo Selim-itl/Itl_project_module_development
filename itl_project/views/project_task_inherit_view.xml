@@ -23,10 +23,18 @@
             <field name="inherit_id" ref="project.view_task_tree2"/>
             <field name="arch" type="xml">
 
+                <xpath expr="//tree" position="inside">
+                    <field name="parent_id" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-info">not parent_id</attribute>
+                </xpath>
+
                 <xpath expr="//field[@name='activity_ids']" position="after">
-                    <field name="sub_task_progress" widget="progressbar" string="Sub-task"/>
-                    <field name="task_progress" widget="percentpie"/>
-                    <field name="task_stages"/>
+                    <field name="sub_task_progress" widget="progressbar" string="Sub-task(%)" attrs="{'invisible': [('parent_id', '=', False)]}"/>
+                    <field name="task_progress" widget="progressbar" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
+                    <field name="task_stages" widget="badge" decoration-success="task_stages == 'completed'" decoration-info="task_stages == 'in_progress'" decoration-warning="task_stages == 'not_started'"/>
                 </xpath>
 
             </field>
@@ -52,13 +60,35 @@
                 </xpath>
 
                 <xpath expr="//field[@name='tag_ids']" position="after">
-                    <field name="sub_task_progress" attrs="{'invisible': ['|',('task_stages','!=','in_progress'), ('parent_id','=', False)]}"/>
-                    <field name="task_progress" attrs="{'invisible': ['|',('task_stages','!=','in_progress'),('parent_id','!=', False)]}"/>
+                    <field name="sub_task_progress" attrs="{'invisible': ['|',('task_stages','!=','in_progress'), ('parent_id','=', False)]}" string="Progress"/>
+                    <field name="task_progress" widget="progressbar" attrs="{'invisible': ['|',('task_stages','!=','in_progress'),('parent_id','!=', False)]}" string="Progress"/>
                 </xpath>
 
                 <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
                     <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='user_ids']" position="after">
+                    <field name="sub_task_progress" string="Progress" widget="progressbar"/>
+                    <field name="task_stages"/>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='company_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='kanban_state']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='stage_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
 
             </field>
         </record>
