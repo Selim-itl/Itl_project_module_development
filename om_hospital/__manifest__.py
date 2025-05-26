@@ -8,7 +8,7 @@
     "installable": True,
     "data": [
         'security/ir.model.access.csv',
-        # 'security/security.xml',
+        'security/security.xml',
         'views/root_menu_view.xml',
         'views/doctor_view.xml',
         'views/patient_view.xml',

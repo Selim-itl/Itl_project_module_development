@@ -23,6 +23,7 @@
             <field name="inherit_id" ref="project.view_task_tree2"/>
             <field name="arch" type="xml">
 
+                <!--                    working code-->
                 <xpath expr="//tree" position="inside">
                     <field name="parent_id" invisible="1"/>
                 </xpath>
