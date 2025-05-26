@@ -1,4 +1,3 @@
-#Updated code written at the morning of 25 May 8:00 AM
 # -*- coding: utf-8 -*-
 from email.policy import default
 
@@ -15,6 +14,7 @@ class ProjectProject(models.Model):
         help="Average progress of all tasks in this project.",
     )
 
+    #calculating project progress
     @api.depends('task_ids.task_progress')
     def _compute_project_progress(self):
         for project in self:
@@ -23,6 +23,7 @@ class ProjectProject(models.Model):
             count = len(top_tasks)
             project.project_progress = round(total / count, 2) if count else 0.0
 
+    #providing button to kanban for open project settings
     def action_open_form_view(self):
         self.ensure_one()  # Ensure only one record is processed
         return {
@@ -53,6 +54,7 @@ class ProjectTask(models.Model):
 
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
+    #setting users to sub-tasks by filter. Now users who are not in parent task are not visible to sub-tasks.
     @api.onchange('parent_id')
     def _onchange_parent_id(self):
         if self.parent_id:
@@ -60,6 +62,7 @@ class ProjectTask(models.Model):
         else:
             return {'domain': {'user_ids': []}}  # or no restriction
 
+    #calculating working days by excluding weekend
     @api.depends('task_start_date', 'date_deadline')
     def _compute_working_days(self):
         for task in self:
@@ -77,6 +80,7 @@ class ProjectTask(models.Model):
             else:
                 task.working_days = 0
 
+    #calculating task progress from sub-tasks and setting task status based on task progress
     @api.depends('child_ids.sub_task_progress')
     def _onchange_task_progress(self):
         for task in self:
