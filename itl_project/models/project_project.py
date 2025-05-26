@@ -42,7 +42,7 @@ class ProjectTask(models.Model):
     task_stages = fields.Selection([
         ('not_started', 'Not started'),
         ('in_progress', 'In progress'),
-        ('completed', 'Completed')], default='not_started')
+        ('completed', 'Completed')], default='not_started', string="Stage", tracking=True)
 
     sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0)
 

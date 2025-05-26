@@ -57,7 +57,7 @@
 
                 <xpath expr="//field[@name='user_ids']" position="after">
                     <field name="task_stages"/>
-                    <field name="working_days" string="Available days"/>
+                    <field name="working_days"/>
                 </xpath>
 
                 <xpath expr="//field[@name='tag_ids']" position="after">
@@ -69,13 +69,25 @@
                     <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
                 </xpath>
 
+                <xpath expr="//page[@name='task_dependencies']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='recurrence']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='extra_info']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
                 <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='partner_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
                 <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='user_ids']" position="after">
                     <field name="sub_task_progress" string="Progress" widget="progressbar"/>
-                    <field name="task_stages"/>
+                    <field name="task_stages" widget="badge" decoration-success="task_stages == 'completed'" decoration-info="task_stages == 'in_progress'" decoration-warning="task_stages == 'not_started'"/>
                 </xpath>
 
                 <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='company_id']" position="attributes">
@@ -87,6 +99,14 @@
                 </xpath>
 
                 <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='stage_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='rating_last_text']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='rating_last_text']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
