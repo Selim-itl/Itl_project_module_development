@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from email.policy import default
 
-from odoo import models, fields, api
+from odoo import models, fields, api,_
+from odoo.exceptions import ValidationError
 from datetime import timedelta
 
 class ProjectProject(models.Model):
@@ -55,12 +56,34 @@ class ProjectTask(models.Model):
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
     #setting users to sub-tasks by filter. Now users who are not in parent task are not visible to sub-tasks.
-    @api.onchange('parent_id')
-    def _onchange_parent_id(self):
-        if self.parent_id:
-            return {'domain': {'user_ids': [('id', 'in', self.parent_id.user_ids.ids)]}}
-        else:
-            return {'domain': {'user_ids': []}}  # or no restriction
+    # @api.onchange('parent_id')
+    # def _onchange_parent_id(self):
+    #     if self.parent_id:
+    #         return {'domain': {'user_ids': [('id', 'in', self.parent_id.user_ids.ids)]}}
+    #     else:
+    #         return {'domain': {'user_ids': []}}  # or no restriction
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('parent_id') and vals.get('user_ids'):
+                parent_users = self.browse(vals['parent_id']).user_ids.ids
+                for user_id in vals['user_ids'][0][2]:  # M2M '[(6, 0, [ids])]
+                    if user_id not in parent_users:
+                        raise ValidationError("Sub-task assignees must be selected from parent task's assignees.")
+        return super().create(vals_list)
+
+    def write(self, vals):
+        for task in self:
+            if 'user_ids' in vals and task.parent_id:
+                parent_users = task.parent_id.user_ids.ids
+                for user_id in vals['user_ids'][0][2]:  # M2M write format
+                    if user_id not in parent_users:
+                        raise ValidationError("Sub-task assignees must be selected from parent task's assignees.")
+        return super().write(vals)
+
+
+
 
     #calculating working days by excluding weekend
     @api.depends('task_start_date', 'date_deadline')
