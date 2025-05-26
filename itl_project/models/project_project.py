@@ -53,6 +53,13 @@ class ProjectTask(models.Model):
 
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
+    @api.onchange('parent_id')
+    def _onchange_parent_id(self):
+        if self.parent_id:
+            return {'domain': {'user_ids': [('id', 'in', self.parent_id.user_ids.ids)]}}
+        else:
+            return {'domain': {'user_ids': []}}  # or no restriction
+
     @api.depends('task_start_date', 'date_deadline')
     def _compute_working_days(self):
         for task in self:
