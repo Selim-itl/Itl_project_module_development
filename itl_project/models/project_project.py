@@ -5,10 +5,13 @@ from odoo import models, fields, api,_
 from odoo.exceptions import ValidationError
 from datetime import timedelta
 
+
 class ProjectProject(models.Model):
     _inherit = 'project.project'
     _description = 'Project project'
 
+    allow_billable = fields.Boolean(default=False)
+    allow_timesheets = fields.Boolean(default=False)
     project_progress = fields.Integer(
         string="Project Progress",
         compute="_compute_project_progress",

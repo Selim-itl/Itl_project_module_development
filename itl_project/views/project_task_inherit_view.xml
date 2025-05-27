@@ -70,7 +70,7 @@
                     <field name="task_progress" widget="progressbar" attrs="{'invisible': ['|',('task_stages','!=','in_progress'),('parent_id','!=', False)]}" string="Progress"/>
                 </xpath>
 
-<!--                Hiding sub-task if parent_id is having value-->
+                <!--                Hiding sub-task if parent_id is having value-->
                 <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
                     <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
                 </xpath>

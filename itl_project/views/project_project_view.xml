@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="project_project_view_form_simplified_inherit_timesheet_itl" model="ir.ui.view">
+        <field name="name">project.project.view.form.simplified.inherit.timesheet.itl</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.project_project_view_form_simplified"/>
+        <field name="priority">24</field>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('o_settings_container')]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_sale_project_inherit_form_inherit_itl" model="ir.ui.view">
+        <field name="name">view.sale.project.inherit.form.inherit.itl</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="sale_project.view_sale_project_inherit_form"/>
+        <field name="priority">25</field>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='partner_phone']" position="after">
+                <field name="sale_line_id" invisible="1"/>
+                <field name="commercial_partner_id" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+</odoo>
