@@ -10,8 +10,9 @@ class ProjectProject(models.Model):
     _inherit = 'project.project'
     _description = 'Project project'
 
-    allow_billable = fields.Boolean(default=False)
+    # allow_billable = fields.Boolean(default=False)
     allow_timesheets = fields.Boolean(default=False)
+
     project_progress = fields.Integer(
         string="Project Progress",
         compute="_compute_project_progress",
@@ -75,6 +76,7 @@ class ProjectTask(models.Model):
                     if user_id not in parent_users:
                         raise ValidationError("Sub-task assignees must be selected from parent task's assignees.")
         return super().create(vals_list)
+
 
     def write(self, vals):
         for task in self:

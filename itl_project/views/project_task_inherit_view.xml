@@ -67,7 +67,7 @@
 
                 <xpath expr="//field[@name='tag_ids']" position="after">
                     <field name="sub_task_progress" attrs="{'invisible': ['|',('task_stages','!=','in_progress'), ('parent_id','=', False)]}" string="Progress"/>
-                    <field name="task_progress" widget="progressbar" attrs="{'invisible': ['|',('task_stages','!=','in_progress'),('parent_id','!=', False)]}" string="Progress"/>
+                    <field name="task_progress" widget="progressbar" attrs="{'invisible': ['|','|',('task_stages','!=','in_progress'),('parent_id','!=', False),('child_ids','!=', True)]}" string="Progress"/>
                 </xpath>
 
                 <!--                Hiding sub-task if parent_id is having value-->
