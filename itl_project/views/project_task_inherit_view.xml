@@ -67,12 +67,12 @@
 
 
                 <xpath expr="//field[@name='user_ids']" position="after">
-                    <field name="task_stages"/>
+                    <field name="task_stages" attrs="{'readonly':[('parent_id','=', False)]}"/>
                     <field name="working_days" attrs="{'invisible':[('parent_id','=', False)]}"/>
                 </xpath>
 
                 <xpath expr="//field[@name='tag_ids']" position="after">
-                    <field name="sub_task_progress" attrs="{'readonly': [('task_stages', 'in', ['not_started', 'completed'])],'invisible': [('parent_id','=', False)]}" string="Progress"/>
+                    <field name="sub_task_progress" attrs="{'readonly': [('task_stages', 'in', ['not_started', 'completed'])],'invisible': [('parent_id','=', False)]}" force_save="1" string="Progress"/>
 <!--                    hiding sub-task progress when it is parent task and will be readonly when stage is in not_started and completed-->
                     <field name="task_progress" widget="progressbar" attrs="{'editable': ['|','|',('task_stages','!=','in_progress'),('child_ids','!=', True)], 'invisible':[('parent_id','!=', False)]}" string="Progress"/>
 <!--                    hiding parent task for sub-task and making editable only when task is in progress and is having child-->

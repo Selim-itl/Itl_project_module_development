@@ -61,11 +61,24 @@ class ProjectTask(models.Model):
 
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
+    @api.onchange('task_stages')
+    def _stage_based_progress(self):
+        for rec in self:
+            print("Stage updated")
+            if rec.task_stages == "not_started":
+                rec.sub_task_progress = 0
+                if not rec.parent_id:
+                    rec.task_progress = 0
+            if rec.task_stages == "completed":
+                rec.sub_task_progress = 100
+                if not rec.parent_id:
+                    rec.task_progress = 100
+
     @api.constrains('sub_task_progress')
     def _check_sub_task_progress_range(self):
         for record in self:
-            if not (0 <= record.sub_task_progress <= 100):
-                raise ValidationError("Progress must be between 0% and 100%")
+            if not (1 <= record.sub_task_progress <= 99):
+                raise ValidationError("Progress must be between 1 and 99")
 
     @api.model_create_multi
     def create(self, vals_list):
