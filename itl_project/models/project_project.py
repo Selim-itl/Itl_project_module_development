@@ -41,7 +41,7 @@ class ProjectProject(models.Model):
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'
-    _order = "id"
+    _order = 'sequence, id'
 
     task_start_date = fields.Date(string='Start date')
     task_stages = fields.Selection([

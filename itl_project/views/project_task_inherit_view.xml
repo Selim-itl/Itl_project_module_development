@@ -25,11 +25,17 @@
 
                 <!--                    working code-->
                 <xpath expr="//tree" position="inside">
+<!--                    <field name="sequence" widget="handle"/>-->
                     <field name="parent_id" invisible="1"/>
                 </xpath>
 
                 <xpath expr="//tree" position="attributes">
                     <attribute name="decoration-info">not parent_id</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='sequence']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                    <attribute name="widget">handle</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='activity_ids']" position="after">
@@ -124,6 +130,17 @@
                 <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='rating_last_text']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
+
+                <xpath expr="//page[@name='description_page']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//page[@name='sub_tasks_page']" position="after">
+                    <page name="description_page" string="Description">
+                        <field name="description" type="html" options="{'collaborative': true, 'resizable': false}" placeholder="Task description..."/>
+                    </page>
+                </xpath>
+
 
 
             </field>
