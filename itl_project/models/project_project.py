@@ -49,7 +49,9 @@ class ProjectTask(models.Model):
         ('in_progress', 'In progress'),
         ('completed', 'Completed')], default='not_started', string="Stage", tracking=True)
 
-    sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0)
+    sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0,help="Value must be between 0 and 100")
+
+
 
     task_progress = fields.Integer(
         string="Task (%)",
@@ -59,13 +61,11 @@ class ProjectTask(models.Model):
 
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
-    #setting users to sub-tasks by filter. Now users who are not in parent task are not visible to sub-tasks.
-    # @api.onchange('parent_id')
-    # def _onchange_parent_id(self):
-    #     if self.parent_id:
-    #         return {'domain': {'user_ids': [('id', 'in', self.parent_id.user_ids.ids)]}}
-    #     else:
-    #         return {'domain': {'user_ids': []}}  # or no restriction
+    @api.constrains('sub_task_progress')
+    def _check_sub_task_progress_range(self):
+        for record in self:
+            if not (0 <= record.sub_task_progress <= 100):
+                raise ValidationError("Progress must be between 0% and 100%")
 
     @api.model_create_multi
     def create(self, vals_list):

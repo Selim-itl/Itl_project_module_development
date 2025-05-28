@@ -72,8 +72,10 @@
                 </xpath>
 
                 <xpath expr="//field[@name='tag_ids']" position="after">
-                    <field name="sub_task_progress" attrs="{'invisible': ['|',('task_stages','!=','in_progress'), ('parent_id','=', False)]}" string="Progress"/>
-                    <field name="task_progress" widget="progressbar" attrs="{'invisible': ['|','|',('task_stages','!=','in_progress'),('parent_id','!=', False),('child_ids','!=', True)]}" string="Progress"/>
+                    <field name="sub_task_progress" attrs="{'readonly': [('task_stages', 'in', ['not_started', 'completed'])],'invisible': [('parent_id','=', False)]}" string="Progress"/>
+<!--                    hiding sub-task progress when it is parent task and will be readonly when stage is in not_started and completed-->
+                    <field name="task_progress" widget="progressbar" attrs="{'editable': ['|','|',('task_stages','!=','in_progress'),('child_ids','!=', True)], 'invisible':[('parent_id','!=', False)]}" string="Progress"/>
+<!--                    hiding parent task for sub-task and making editable only when task is in progress and is having child-->
                 </xpath>
 
                 <!--                Hiding sub-task if parent_id is having value-->
@@ -101,6 +103,7 @@
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
+<!--                This is for sub-task line-->
                 <xpath expr="//page[@name='sub_tasks_page']/field/tree/field[@name='user_ids']" position="after">
                     <field name="sub_task_progress" string="Progress" widget="progressbar"/>
                     <field name="task_stages" widget="badge" decoration-success="task_stages == 'completed'" decoration-info="task_stages == 'in_progress'" decoration-warning="task_stages == 'not_started'"/>
