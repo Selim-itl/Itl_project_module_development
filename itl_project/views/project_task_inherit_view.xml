@@ -4,7 +4,7 @@
     <data>
         <!--    activating default groud by-->
         <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
-            <field name="context">{'search_default_groupby_ancestor_task':1}</field>
+            <field name="context">{'search_default_groupby_ancestor_task':0}</field>
         </record>
 
         <!--    re-ordering kanban view sequence -->
@@ -25,7 +25,6 @@
 
                 <!--                    working code-->
                 <xpath expr="//tree" position="inside">
-<!--                    <field name="sequence" widget="handle"/>-->
                     <field name="parent_id" invisible="1"/>
                 </xpath>
 
@@ -42,6 +41,30 @@
                     <field name="sub_task_progress" widget="progressbar" string="Sub-task(%)" attrs="{'invisible': [('parent_id', '=', False)]}"/>
                     <field name="task_progress" widget="progressbar" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
                     <field name="task_stages" widget="badge" decoration-success="task_stages == 'completed'" decoration-info="task_stages == 'in_progress'" decoration-warning="task_stages == 'not_started'"/>
+                </xpath>
+
+                <xpath expr="//field[@name='project_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='company_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='stage_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='kanban_state']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='date_deadline']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
 
             </field>

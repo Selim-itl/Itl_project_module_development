@@ -47,7 +47,7 @@ class ProjectTask(models.Model):
     task_stages = fields.Selection([
         ('not_started', 'Not started'),
         ('in_progress', 'In progress'),
-        ('completed', 'Completed')], default='not_started', string="Stage", tracking=True)
+        ('completed', 'Completed')], compute="_check_and_change_stage",default='not_started', string="Stage", tracking=True)
 
     sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0,help="Value must be between 0 and 100")
 
@@ -60,6 +60,25 @@ class ProjectTask(models.Model):
     )
 
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
+
+    #Check progress value and change stage if progress is 100
+    @api.depends('sub_task_progress')
+    def _check_and_change_stage(self):
+        for rec in self:
+            if rec.parent_id:
+                if rec.sub_task_progress == 100:
+                    rec.task_stages = 'completed'
+                elif rec.sub_task_progress == 0:
+                    rec.task_stages = 'not_started'
+                else:
+                    rec.task_stages = 'in_progress'
+            else:
+                if rec.task_progress == 100:
+                    rec.task_stages = 'completed'
+                elif rec.task_progress == 0:
+                    rec.task_stages = 'not_started'
+                else:
+                    rec.task_stages = 'in_progress'
 
     #restrict parent task deletion before deleting its sub task/tasks
     def unlink(self):
@@ -81,14 +100,14 @@ class ProjectTask(models.Model):
                 if not rec.parent_id:
                     rec.task_progress = 100
 
-    #validating user input to accept number between 0 to 100
+    #validating user input to accept number between 0 and 100
     @api.constrains('sub_task_progress')
     def _check_sub_task_progress_range(self):
         for record in self:
             if not (0 <= record.sub_task_progress <= 100):
-                raise ValidationError("Progress must be between 1 and 99")
+                raise ValidationError("Progress must be between 0 and 100")
 
-    # Ensuring sub task member who are in parent task (creating time)
+    # Ensuring sub-task member who are in parent task (creating time)
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:

@@ -38,22 +38,4 @@
         </field>
     </record>
 
-
-    <!--    <record id="view_sale_project_inherit_form_inherit_itl" model="ir.ui.view">-->
-    <!--        <field name="name">view.sale.project.inherit.form.inherit.itl</field>-->
-    <!--        <field name="model">project.task</field>-->
-    <!--        <field name="inherit_id" ref="sale_project.view_sale_project_inherit_form"/>-->
-    <!--        <field name="priority">25</field>-->
-    <!--        <field name="arch" type="xml">-->
-
-    <!--            <xpath expr="//field[@name='partner_phone']" position="after">-->
-    <!--                <field name="sale_line_id" invisible="1"/>-->
-    <!--                <field name="commercial_partner_id" invisible="1"/>-->
-    <!--            </xpath>-->
-
-    <!--        </field>-->
-    <!--    </record>-->
-
-
-
 </odoo>

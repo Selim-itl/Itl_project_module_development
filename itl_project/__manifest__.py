@@ -3,7 +3,7 @@
     'author': "Itl",
     'category': 'Project Management',
     'version': '16.0.0',
-    'depends': ['base', 'project', 'sale_project'],
+    'depends': ['base', 'project', 'sale_project', 'sale_timesheet'],
     'data': [
         'views/project_kanban_inherit.xml',
         'views/project_task_inherit_view.xml',

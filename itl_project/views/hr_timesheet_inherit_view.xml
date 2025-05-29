@@ -35,4 +35,52 @@
         </field>
     </record>
 
+    <record id="view_project_task_tree_hr_timesheet_inherit_custom" model="ir.ui.view">
+        <field name="name">project.task.tree.hr.timesheet.inherit.custom</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="hr_timesheet.view_task_tree2_inherited"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='progress']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='effective_hours']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='planned_hours']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='subtask_effective_hours']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='total_hours_spent']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='remaining_hours']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+
+
+        </field>
+    </record>
+
+    <record id="view_task_tree2_inherited_custom" model="ir.ui.view">
+        <field name="name">view.task.tree2.inherited.custom</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="sale_timesheet.view_task_tree2_inherited"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='remaining_hours_so']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
 </odoo>
