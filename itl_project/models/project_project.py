@@ -61,10 +61,17 @@ class ProjectTask(models.Model):
 
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
+    #restrict parent task deletion before deleting its sub task/tasks
+    def unlink(self):
+        for task in self:
+            if task.child_ids:
+                raise ValidationError(_("You cannot delete a parent task that has child tasks. Please delete its child tasks first."))
+        return super(ProjectTask, self).unlink()
+
+    #setting value to task and sub task based on states
     @api.onchange('task_stages')
     def _stage_based_progress(self):
         for rec in self:
-            print("Stage updated")
             if rec.task_stages == "not_started":
                 rec.sub_task_progress = 0
                 if not rec.parent_id:
@@ -74,12 +81,14 @@ class ProjectTask(models.Model):
                 if not rec.parent_id:
                     rec.task_progress = 100
 
+    #validating user input to accept number between 0 to 100
     @api.constrains('sub_task_progress')
     def _check_sub_task_progress_range(self):
         for record in self:
-            if not (1 <= record.sub_task_progress <= 99):
+            if not (0 <= record.sub_task_progress <= 100):
                 raise ValidationError("Progress must be between 1 and 99")
 
+    # Ensuring sub task member who are in parent task (creating time)
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -91,6 +100,7 @@ class ProjectTask(models.Model):
         return super().create(vals_list)
 
 
+    # Ensuring sub task member who are in parent task (editing time)
     def write(self, vals):
         for task in self:
             if 'user_ids' in vals and task.parent_id:
