@@ -10,7 +10,6 @@ class ProjectProject(models.Model):
     _inherit = 'project.project'
     _description = 'Project project'
 
-    # allow_billable = fields.Boolean(default=False)
     allow_timesheets = fields.Boolean(default=False)
 
     project_progress = fields.Integer(
@@ -28,26 +27,37 @@ class ProjectProject(models.Model):
             count = len(top_tasks)
             project.project_progress = round(total / count, 2) if count else 0.0
 
-    #providing button to kanban for open project settings
-    def action_open_form_view(self):
-        self.ensure_one()  # Ensure only one record is processed
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'project.project',
-            'res_id': self.id,
-            'view_mode': 'form',
-            'target': 'self',
-        }
+    # #providing button to kanban for open project settings
+    # def action_open_form_view(self):
+    #     self.ensure_one()  # Ensure only one record is processed
+    #     return {
+    #         'type': 'ir.actions.act_window',
+    #         'res_model': 'project.project',
+    #         'res_id': self.id,
+    #         'view_mode': 'form',
+    #         'target': 'self',
+    #     }
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'
     _order = 'sequence, id'
 
     task_start_date = fields.Date(string='Start date')
+
+    # Works with stage calculation
+    # task_stages = fields.Selection([
+    #     ('not_started', 'Not started'),
+    #     ('in_progress', 'In progress'),
+    #     ('completed', 'Completed'),
+    #     ('cancelled', 'Cancelled'),
+    #     ('hold', 'Hold')], compute="_check_and_change_stage",default='not_started', string="Stage", tracking=True)
+
     task_stages = fields.Selection([
         ('not_started', 'Not started'),
         ('in_progress', 'In progress'),
-        ('completed', 'Completed')], compute="_check_and_change_stage",default='not_started', string="Stage", tracking=True)
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+        ('hold', 'Hold')], default='not_started', string="Stage", tracking=True)
 
     sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0,help="Value must be between 0 and 100")
 
@@ -62,23 +72,23 @@ class ProjectTask(models.Model):
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
     #Check progress value and change stage if progress is 100
-    @api.depends('sub_task_progress')
-    def _check_and_change_stage(self):
-        for rec in self:
-            if rec.parent_id:
-                if rec.sub_task_progress == 100:
-                    rec.task_stages = 'completed'
-                elif rec.sub_task_progress == 0:
-                    rec.task_stages = 'not_started'
-                else:
-                    rec.task_stages = 'in_progress'
-            else:
-                if rec.task_progress == 100:
-                    rec.task_stages = 'completed'
-                elif rec.task_progress == 0:
-                    rec.task_stages = 'not_started'
-                else:
-                    rec.task_stages = 'in_progress'
+    # @api.depends('sub_task_progress')
+    # def _check_and_change_stage(self):
+    #     for rec in self:
+    #         if rec.parent_id:
+    #             if rec.sub_task_progress == 100:
+    #                 rec.task_stages = 'completed'
+    #             elif rec.sub_task_progress == 0:
+    #                 rec.task_stages = 'not_started'
+    #             else:
+    #                 rec.task_stages = 'in_progress'
+    #         else:
+    #             if rec.task_progress == 100:
+    #                 rec.task_stages = 'completed'
+    #             elif rec.task_progress == 0:
+    #                 rec.task_stages = 'not_started'
+    #             else:
+    #                 rec.task_stages = 'in_progress'
 
     #restrict parent task deletion before deleting its sub task/tasks
     def unlink(self):
@@ -95,7 +105,7 @@ class ProjectTask(models.Model):
                 rec.sub_task_progress = 0
                 if not rec.parent_id:
                     rec.task_progress = 0
-            if rec.task_stages == "completed":
+            if rec.task_stages in ["completed","cancelled"]:
                 rec.sub_task_progress = 100
                 if not rec.parent_id:
                     rec.task_progress = 100
