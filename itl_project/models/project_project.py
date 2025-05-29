@@ -45,19 +45,17 @@ class ProjectTask(models.Model):
     task_start_date = fields.Date(string='Start date')
 
     # Works with stage calculation
+    task_stages = fields.Selection([
+        ('not_started', 'Not started'),
+        ('in_progress', 'In progress'),
+        ('completed', 'Completed')], compute="_check_and_change_stage",default='not_started', string="Stage", tracking=True)
+
     # task_stages = fields.Selection([
     #     ('not_started', 'Not started'),
     #     ('in_progress', 'In progress'),
     #     ('completed', 'Completed'),
     #     ('cancelled', 'Cancelled'),
-    #     ('hold', 'Hold')], compute="_check_and_change_stage",default='not_started', string="Stage", tracking=True)
-
-    task_stages = fields.Selection([
-        ('not_started', 'Not started'),
-        ('in_progress', 'In progress'),
-        ('completed', 'Completed'),
-        ('cancelled', 'Cancelled'),
-        ('hold', 'Hold')], default='not_started', string="Stage", tracking=True)
+    #     ('hold', 'Hold')], default='not_started', string="Stage", tracking=True)
 
     sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0,help="Value must be between 0 and 100")
 
@@ -70,23 +68,23 @@ class ProjectTask(models.Model):
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
     #Check progress value and change stage if progress is 100
-    # @api.depends('sub_task_progress')
-    # def _check_and_change_stage(self):
-    #     for rec in self:
-    #         if rec.parent_id:
-    #             if rec.sub_task_progress == 100:
-    #                 rec.task_stages = 'completed'
-    #             elif rec.sub_task_progress == 0:
-    #                 rec.task_stages = 'not_started'
-    #             else:
-    #                 rec.task_stages = 'in_progress'
-    #         else:
-    #             if rec.task_progress == 100:
-    #                 rec.task_stages = 'completed'
-    #             elif rec.task_progress == 0:
-    #                 rec.task_stages = 'not_started'
-    #             else:
-    #                 rec.task_stages = 'in_progress'
+    @api.depends('sub_task_progress')
+    def _check_and_change_stage(self):
+        for rec in self:
+            if rec.parent_id:
+                if rec.sub_task_progress == 100:
+                    rec.task_stages = 'completed'
+                elif rec.sub_task_progress == 0:
+                    rec.task_stages = 'not_started'
+                else:
+                    rec.task_stages = 'in_progress'
+            else:
+                if rec.task_progress == 100:
+                    rec.task_stages = 'completed'
+                elif rec.task_progress == 0:
+                    rec.task_stages = 'not_started'
+                else:
+                    rec.task_stages = 'in_progress'
 
     #restrict parent task deletion before deleting its sub task/tasks
     def unlink(self):
@@ -167,32 +165,42 @@ class ProjectTask(models.Model):
                 total_progress = sum(child.sub_task_progress for child in task.child_ids)
                 task.task_progress = round(total_progress / total, 2) if total else 0.0
 
-                # Collect child stages
-                child_stages = [child.task_stages for child in task.child_ids]
-                non_cancelled_stages = [s for s in child_stages if s != 'cancelled']
-
-                if all(s == 'completed' for s in child_stages):
+                progresses = [child.sub_task_progress for child in task.child_ids]
+                if all(p == 100 for p in progresses):
                     task.task_stages = 'completed'
-                elif all(s == 'not_started' for s in child_stages):
-                    task.task_stages = 'not_started'
-                elif all(s == 'hold' for s in child_stages):
-                    task.task_stages = 'hold'
-                elif all(s == 'cancelled' for s in child_stages):
-                    task.task_stages = 'cancelled'
-                elif non_cancelled_stages:
-                    if all(s == 'completed' for s in non_cancelled_stages):
-                        task.task_stages = 'completed'
-                    elif all(s == 'not_started' for s in non_cancelled_stages):
-                        task.task_stages = 'not_started'
-                    elif all(s == 'hold' for s in non_cancelled_stages):
-                        task.task_stages = 'hold'
-                    else:
-                        task.task_stages = 'in_progress'
+                elif any(p > 0 for p in progresses):
+                    task.task_stages = 'in_progress'
                 else:
-                    task.task_stages = 'cancelled'  # fallback if all were cancelled
+                    task.task_stages = 'not_started'
             else:
-                # No child tasks — manual stage control or default
                 task.task_progress = 0.0
+
+                # Collect child stages
+                # child_stages = [child.task_stages for child in task.child_ids]
+            #     non_cancelled_stages = [s for s in child_stages if s != 'cancelled']
+            #
+            #     if all(s == 'completed' for s in child_stages):
+            #         task.task_stages = 'completed'
+            #     elif all(s == 'not_started' for s in child_stages):
+            #         task.task_stages = 'not_started'
+            #     elif all(s == 'hold' for s in child_stages):
+            #         task.task_stages = 'hold'
+            #     elif all(s == 'cancelled' for s in child_stages):
+            #         task.task_stages = 'cancelled'
+            #     elif non_cancelled_stages:
+            #         if all(s == 'completed' for s in non_cancelled_stages):
+            #             task.task_stages = 'completed'
+            #         elif all(s == 'not_started' for s in non_cancelled_stages):
+            #             task.task_stages = 'not_started'
+            #         elif all(s == 'hold' for s in non_cancelled_stages):
+            #             task.task_stages = 'hold'
+            #         else:
+            #             task.task_stages = 'in_progress'
+            #     else:
+            #         task.task_stages = 'cancelled'  # fallback if all were cancelled
+            # else:
+                # No child tasks — manual stage control or default
+                # task.task_progress = 0.0
                 # if task.task_stages not in ('completed', 'cancelled'):
                 #     task.task_stages = 'not_started'
 
@@ -212,12 +220,4 @@ class ProjectTask(models.Model):
                 #     task.task_stages = 'not_started'
 
                 # Update task_stages
-                # progresses = [child.sub_task_progress for child in task.child_ids]
-                # if all(p == 100 for p in progresses):
-                #     task.task_stages = 'completed'
-                # elif any(p > 0 for p in progresses):
-                #     task.task_stages = 'in_progress'
-                # else:
-                #     task.task_stages = 'not_started'
-            # else:
-            #     task.task_progress = 0.0
+
