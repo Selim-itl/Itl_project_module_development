@@ -61,8 +61,6 @@ class ProjectTask(models.Model):
 
     sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0,help="Value must be between 0 and 100")
 
-
-
     task_progress = fields.Integer(
         string="Task (%)",
         compute='_onchange_task_progress',
@@ -97,7 +95,7 @@ class ProjectTask(models.Model):
                 raise ValidationError(_("You cannot delete a parent task that has child tasks. Please delete its child tasks first."))
         return super(ProjectTask, self).unlink()
 
-    #setting value to task and sub task based on states
+    #setting value to task and sub-task progress based on states
     @api.onchange('task_stages')
     def _stage_based_progress(self):
         for rec in self:
@@ -169,13 +167,57 @@ class ProjectTask(models.Model):
                 total_progress = sum(child.sub_task_progress for child in task.child_ids)
                 task.task_progress = round(total_progress / total, 2) if total else 0.0
 
-                # Update task_stages
-                progresses = [child.sub_task_progress for child in task.child_ids]
-                if all(p == 100 for p in progresses):
+                # Collect child stages
+                child_stages = [child.task_stages for child in task.child_ids]
+                non_cancelled_stages = [s for s in child_stages if s != 'cancelled']
+
+                if all(s == 'completed' for s in child_stages):
                     task.task_stages = 'completed'
-                elif any(p > 0 for p in progresses):
-                    task.task_stages = 'in_progress'
-                else:
+                elif all(s == 'not_started' for s in child_stages):
                     task.task_stages = 'not_started'
+                elif all(s == 'hold' for s in child_stages):
+                    task.task_stages = 'hold'
+                elif all(s == 'cancelled' for s in child_stages):
+                    task.task_stages = 'cancelled'
+                elif non_cancelled_stages:
+                    if all(s == 'completed' for s in non_cancelled_stages):
+                        task.task_stages = 'completed'
+                    elif all(s == 'not_started' for s in non_cancelled_stages):
+                        task.task_stages = 'not_started'
+                    elif all(s == 'hold' for s in non_cancelled_stages):
+                        task.task_stages = 'hold'
+                    else:
+                        task.task_stages = 'in_progress'
+                else:
+                    task.task_stages = 'cancelled'  # fallback if all were cancelled
             else:
+                # No child tasks — manual stage control or default
                 task.task_progress = 0.0
+                # if task.task_stages not in ('completed', 'cancelled'):
+                #     task.task_stages = 'not_started'
+
+
+                # progresses = [child.task_stages for child in task.child_ids]
+                # if all(p == "completed" for p in progresses):
+                #     task.task_stages = 'completed'
+                # elif all(p == "not_started" for p in progresses):
+                #     task.task_stages = 'not_started'
+                # elif all(p == "cancelled" for p in progresses):
+                #     task.task_stages = 'cancelled'
+                # elif all(p == "hold" for p in progresses):
+                #     task.task_stages = 'hold'
+                # elif any(p in ["hold","not_started","in_progress"] for p in progresses):
+                #     task.task_stages = 'in_progress'
+                # else:
+                #     task.task_stages = 'not_started'
+
+                # Update task_stages
+                # progresses = [child.sub_task_progress for child in task.child_ids]
+                # if all(p == 100 for p in progresses):
+                #     task.task_stages = 'completed'
+                # elif any(p > 0 for p in progresses):
+                #     task.task_stages = 'in_progress'
+                # else:
+                #     task.task_stages = 'not_started'
+            # else:
+            #     task.task_progress = 0.0
