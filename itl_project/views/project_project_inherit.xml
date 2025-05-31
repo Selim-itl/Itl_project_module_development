@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--    inheriting kanban view and getting icon if project having customer-->
+    <!--    <record id="project_kanban_view_inherited" model="ir.ui.view">-->
+    <!--        <field name="name">project.kanban.inherited</field>-->
+    <!--        <field name="model">project.project</field>-->
+    <!--        <field name="inherit_id" ref="project.view_project_kanban"/>-->
+    <!--        <field name="arch" type="xml">-->
+
+    <!--            <xpath expr="//div[hasclass('o_primary')]" position="inside">-->
+    <!--                <t t-if="record.partner_id.value">-->
+    <!--                    <span class="o_text_overflow text-info">-->
+    <!--                        <button type="object" name="action_open_form_view"-->
+    <!--                                class="btn btn-primary btn-sm ms-2" icon="fa-arrow-right" title="Open form"/>-->
+    <!--                    </span>-->
+    <!--                </t>-->
+    <!--            </xpath>-->
+
+    <!--        </field>-->
+    <!--    </record>-->
+
+
+    <!--    inheriting project form-->
+    <record id="project_form_view_inherited" model="ir.ui.view">
+        <field name="name">project.form.inherited</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="string">Project Leader</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="assigned_members" widget="many2many_avatar_user"/>
+                <field name="project_progress" widget="progressbar"/>
+            </xpath>
+            <!--            hiding header's buttons-->
+            <xpath expr="//header" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//header" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!--            currently hiding all the button containing div. letter this will disabled to have custom buttons-->
+            <xpath expr="//div[@name='button_box']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!--            this will replace all stat buttons and add custom button.-->
+            <!--            <xpath expr="//div[@name='button_box']/button" position="replace">-->
+            <!--                <button class="oe_stat_button" name="your_custom_action" type="object" icon="fa-custom-icon">-->
+            <!--                    <div class="o_field_widget o_stat_info">-->
+            <!--                        <span class="o_stat_value">-->
+            <!--                            <field name="your_custom_field" nolabel="1"/>-->
+            <!--                        </span>-->
+            <!--                        <span class="o_stat_text">Your Label</span>-->
+            <!--                    </div>-->
+            <!--                </button>-->
+            <!--            </xpath>-->
+
+            <xpath expr="//field[@name='label_tasks']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//form/sheet/group/group/field[@name='company_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//notebook/page[@name='settings']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='tag_ids']" position="before">
+                <field name="project_coordinator" widget="many2many_avatar_user"/>
+                <field name="project_sponsor" widget="many2many_avatar_user"/>
+                <field name="project_stages"/>
+            </xpath>
+
+            <xpath expr="//notebook/page[@name='description']" position="before">
+                <page name="statistics" string="Statistics">
+                    <group>
+                        <group>
+                            <field name="days_count"/>
+                            <field name="completed_task"/>
+                        </group>
+                        <group>
+                            <field name="not_started_task"/>
+                            <field name="in_progress_task"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+
+</odoo>

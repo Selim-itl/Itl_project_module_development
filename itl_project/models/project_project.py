@@ -11,11 +11,42 @@ class ProjectProject(models.Model):
     _description = 'Project project'
 
     allow_timesheets = fields.Boolean(default=False)
-
     project_progress = fields.Integer(
         string="Project Progress",
         compute="_compute_project_progress",
         help="Average progress of all tasks in this project.",
+    )
+
+    days_count = fields.Integer("Duration")
+    completed_task = fields.Integer("Completed Task")
+    in_progress_task = fields.Integer("In-progress Task")
+    not_started_task = fields.Integer("Not started Task")
+    assigned_members = fields.Many2many(
+        "res.users",
+        "project_project_member_rel",  # Changed from project_task to project_project
+        "project_id",  # Changed to match project.project's ID field
+        "user_id",
+        string="Members"
+    )
+    project_stages = fields.Selection([
+        ('not_started', 'Not started'),
+        ('in_progress', 'In progress'),
+        ('completed', 'Completed')], default='not_started', string="Status")
+
+    project_coordinator = fields.Many2many(
+        "res.users",
+        "project_project_coordinator_rel",  # Changed relation table name
+        "project_id",
+        "user_id",
+        string="Coordinator"
+    )
+
+    project_sponsor = fields.Many2many(
+        "res.users",
+        "project_project_sponsor_rel",  # Changed relation table name
+        "project_id",
+        "user_id",
+        string="Sponsor"
     )
 
     #calculating project progress
