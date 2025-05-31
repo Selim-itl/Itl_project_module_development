@@ -4,7 +4,9 @@ from email.policy import default
 from odoo import models, fields, api,_
 from odoo.exceptions import ValidationError
 from datetime import timedelta
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class ProjectProject(models.Model):
     _inherit = 'project.project'
@@ -17,8 +19,8 @@ class ProjectProject(models.Model):
         help="Average progress of all tasks in this project.",
     )
 
-    days_count = fields.Integer("Duration", compute="_compute_working_days_duration", store=True, help="Duration in working days (excluding Fridays)")
-    completed_task = fields.Integer("Completed Task")
+    days_count = fields.Integer("Working Days", compute="_compute_working_days_duration", store=True, help="Duration in working days (excluding Fridays)")
+    completed_task = fields.Integer("Completed Task", compute='_compute_completed_tasks', store=True)
     in_progress_task = fields.Integer("In-progress Task")
     not_started_task = fields.Integer("Not started Task")
     assigned_members = fields.Many2many(
@@ -48,6 +50,12 @@ class ProjectProject(models.Model):
         "user_id",
         string="Sponsor"
     )
+    #completed tasks count
+    @api.depends('task_ids.task_stages')
+    def _compute_completed_tasks(self):
+        for project in self:
+            project.completed_task = len(project.task_ids.filtered(lambda task: task.task_stages == 'completed'))
+
 
     #counting working days
     @api.depends('date_start', 'date')
