@@ -33,7 +33,7 @@ class ProjectProject(models.Model):
     project_stages = fields.Selection([
         ('not_started', 'Not started'),
         ('in_progress', 'In progress'),
-        ('completed', 'Completed')], default='not_started', string="Status")
+        ('completed', 'Completed')], default='not_started', string="Status", compute="_compute_project_stages")
 
     project_coordinator = fields.Many2many(
         "res.users",
@@ -51,7 +51,27 @@ class ProjectProject(models.Model):
         string="Sponsor"
     )
 
-    #compute in-progress tasks
+    #compute project stages
+    @api.depends('task_ids.task_stages')
+    def _compute_project_stages(self):
+        for rec in self:
+            tasks = rec.task_ids
+            stages = [task.task_stages for task in tasks]
+
+            if all(s == "completed" for s in stages):
+                rec.project_stages = "completed"
+            elif all(s == "not_started" for s in stages):
+                rec.project_stages = "not_started"
+            else:
+                rec.project_stages = "in_progress"
+
+    #compute not started tasks number
+    @api.depends('task_ids.task_stages')
+    def _compute_not_started_tasks(self):
+        for rec in self:
+            rec.not_started_task = len(rec.task_ids.filtered(lambda task: task.task_stages == "not_started"))
+
+    #compute in-progress tasks number
     @api.depends('task_ids.task_stages')
     def _compute_inprogress_tasks(self):
         for rec in self:
