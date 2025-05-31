@@ -17,7 +17,7 @@ class ProjectProject(models.Model):
         help="Average progress of all tasks in this project.",
     )
 
-    days_count = fields.Integer("Duration")
+    days_count = fields.Integer("Duration", compute="_compute_working_days_duration", store=True, help="Duration in working days (excluding Fridays)")
     completed_task = fields.Integer("Completed Task")
     in_progress_task = fields.Integer("In-progress Task")
     not_started_task = fields.Integer("Not started Task")
@@ -48,6 +48,29 @@ class ProjectProject(models.Model):
         "user_id",
         string="Sponsor"
     )
+
+    #counting working days
+    @api.depends('date_start', 'date')
+    def _compute_working_days_duration(self):
+        for project in self:
+            if project.date_start and project.date:
+                delta = project.date - project.date_start
+                if delta.days < 0:
+                    project.days_count = 0
+                    continue
+
+                total_days = delta.days + 1  # inclusive of both start and end dates
+                current_date = project.date_start
+                working_days = 0
+
+                for day in range(total_days):
+                    if current_date.weekday() != 4:  # 4 = Friday
+                        working_days += 1
+                    current_date += timedelta(days=1)
+
+                project.days_count = working_days
+            else:
+                project.days_count = 0
 
     #calculating project progress
     @api.depends('task_ids.task_progress')
