@@ -21,8 +21,8 @@ class ProjectProject(models.Model):
 
     days_count = fields.Integer("Working Days", compute="_compute_working_days_duration", store=True, help="Duration in working days (excluding Fridays)")
     completed_task = fields.Integer("Completed Task", compute='_compute_completed_tasks', store=True)
-    in_progress_task = fields.Integer("In-progress Task")
-    not_started_task = fields.Integer("Not started Task")
+    in_progress_task = fields.Integer("In-progress Task", compute="_compute_inprogress_tasks", store=True)
+    not_started_task = fields.Integer("Not started Task", compute="_compute_not_started_tasks", store=True)
     assigned_members = fields.Many2many(
         "res.users",
         "project_project_member_rel",  # Changed from project_task to project_project
@@ -50,6 +50,13 @@ class ProjectProject(models.Model):
         "user_id",
         string="Sponsor"
     )
+
+    #compute in-progress tasks
+    @api.depends('task_ids.task_stages')
+    def _compute_inprogress_tasks(self):
+        for rec in self:
+            rec.in_progress_task = len(rec.task_ids.filtered(lambda task: task.task_stages == "in_progress"))
+
     #completed tasks count
     @api.depends('task_ids.task_stages')
     def _compute_completed_tasks(self):
