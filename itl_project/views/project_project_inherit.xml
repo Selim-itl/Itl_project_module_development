@@ -20,6 +20,82 @@
     <!--        </field>-->
     <!--    </record>-->
 
+    <!--    inheriting and extending project kanban view-->
+    <record id="project_kanban_view_inherited" model="ir.ui.view">
+        <field name="name">project.kanban.inherited</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_kanban"/>
+        <field name="arch" type="xml">
+
+            <!--            adding fields at the root of kanban which will load in kanban-->
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="project_stages"/>
+                <field name="task_count_with_subtasks"/>
+                <field name="completed_task"/>
+                <field name="in_progress_task"/>
+                <field name="not_started_task"/>
+            </xpath>
+
+            <!-- Enhanced status display after project name -->
+            <xpath expr="//span[@t-att-title='record.display_name.value']" position="after">
+                <div t-if="record.project_stages.raw_value" class="mt-2 mb-1">
+                    <t t-set="status_info" t-value="{
+                        'completed': {'class': 'bg-success text-white', 'text': 'Completed', 'icon': 'fa-check-circle'},
+                        'in_progress': {'class': 'bg-warning text-dark', 'text': 'In Progress', 'icon': 'fa-spinner fa-pulse'},
+                        'not_started': {'class': 'bg-secondary text-white', 'text': 'Not Started', 'icon': 'fa-hourglass-start'}
+                    }[record.project_stages.raw_value]"/>
+
+                    <span t-attf-class="badge #{status_info['class']} rounded-pill p-2 d-inline-flex align-items-center"
+                          style="font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px;">
+                        <i t-attf-class="fa #{status_info['icon']} me-2"/>
+                        <t t-esc="status_info['text']"/>
+                    </span>
+                </div>
+            </xpath>
+
+            <!--            adding project progressbar-->
+            <xpath expr="//div[hasclass('o_primary')]/span[hasclass('o_text_overflow')][2]" position="replace">
+                <div><field name="project_progress" widget="progressbar"/></div>
+            </xpath>
+
+            <!--            hiding task count created by Odoo-->
+            <xpath expr="//a[hasclass('o_project_kanban_box')]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+            <!-- Insert task count with subtasks after date -->
+            <xpath expr="//div[@t-if='record.date.raw_value or record.date_start.raw_value']" position="after">
+                <div class="text-muted o_row" title="Total tasks including subtasks">
+                    <span class="fa fa-tasks me-2"/>
+                    <span t-esc="record.task_count_with_subtasks.value"/>
+                    <span class="ms-1">tasks (total)</span>
+                </div>
+            </xpath>
+
+
+            <!--            insert number of completed, in progress and not started task count number at the bottom-->
+            <xpath expr="//div[hasclass('o_project_kanban_boxes')]" position="inside">
+                <div class="d-flex flex-wrap">
+                    <div class="o_project_kanban_box mx-2" title="Completed Tasks">
+                        <span class="o_value text-success"><t t-esc="record.completed_task.value"/></span>
+                        <span class="o_label ms-1 text-muted small">Done</span>
+                    </div>
+                    <div class="o_project_kanban_box mx-2" title="In Progress Tasks">
+                        <span class="o_value text-warning"><t t-esc="record.in_progress_task.value"/></span>
+                        <span class="o_label ms-1 text-muted small">In Progress</span>
+                    </div>
+                    <div class="o_project_kanban_box mx-2" title="Not Started Tasks">
+                        <span class="o_value text-muted"><t t-esc="record.not_started_task.value"/></span>
+                        <span class="o_label ms-1 text-muted small">Not Started</span>
+                    </div>
+                </div>
+            </xpath>
+
+
+
+        </field>
+    </record>
+
 
     <!--    inheriting project form-->
     <record id="project_form_view_inherited" model="ir.ui.view">
@@ -103,7 +179,7 @@
         </field>
     </record>
 
-<!--    tree view of all projects-->
+    <!--    tree view of all projects-->
     <record id="project_view_project_itl" model="ir.ui.view">
         <field name="name">project.view.project.itl</field>
         <field name="model">project.project</field>
@@ -130,7 +206,7 @@
         </field>
     </record>
 
-<!--inherited project tree view and added custom field which got invisible here-->
+    <!--inherited project tree view and added custom field which got invisible here-->
     <record id="hr_timesheet_project_project_view_tree_inherit_sale_project_itl" model="ir.ui.view">
         <field name="name">hr_timesheet.project.project.view.tree.inherit.sale.project.itl</field>
         <field name="model">project.project</field>
@@ -144,7 +220,7 @@
         </field>
     </record>
 
-<!--inherited project tree view and added custom field which got invisible here-->
+    <!--inherited project tree view and added custom field which got invisible here-->
     <record id="sale_project_project_project_view_tree_inherit_sale_project_itl" model="ir.ui.view">
         <field name="name">sale_project.project.project.view.tree.inherit.sale.project</field>
         <field name="model">project.project</field>
