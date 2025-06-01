@@ -51,6 +51,10 @@ class ProjectProject(models.Model):
         string="Sponsor"
     )
 
+    def action_stat_button_all_tasks(self):
+        for rec in self:
+            print("Method executed successfully!")
+
     #compute project stages
     @api.depends('task_ids.task_stages')
     def _compute_project_stages(self):

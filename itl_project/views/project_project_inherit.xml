@@ -41,8 +41,8 @@
                 <div t-if="record.project_stages.raw_value" class="mt-2 mb-1">
                     <t t-set="status_info" t-value="{
                         'completed': {'class': 'bg-success text-white', 'text': 'Completed', 'icon': 'fa-check-circle'},
-                        'in_progress': {'class': 'bg-warning text-dark', 'text': 'In Progress', 'icon': 'fa-spinner fa-pulse'},
-                        'not_started': {'class': 'bg-secondary text-white', 'text': 'Not Started', 'icon': 'fa-hourglass-start'}
+                        'in_progress': {'class': 'bg-info text-white', 'text': 'In Progress', 'icon': 'fa-spinner fa-pulse'},
+                        'not_started': {'class': 'bg-warning text-white', 'text': 'Not Started', 'icon': 'fa-hourglass-start'}
                     }[record.project_stages.raw_value]"/>
 
                     <span t-attf-class="badge #{status_info['class']} rounded-pill p-2 d-inline-flex align-items-center"
@@ -104,6 +104,7 @@
         <field name="inherit_id" ref="project.edit_project"/>
         <field name="arch" type="xml">
 
+            <!--            renaming project manager-->
             <xpath expr="//field[@name='user_id']" position="attributes">
                 <attribute name="string">Project Leader</attribute>
             </xpath>
@@ -117,26 +118,50 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
-            <xpath expr="//header" position="attributes">
+
+            <!--hiding first stat button-->
+            <xpath expr="//div[@name='button_box']/button[1]" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
-
-            <!--            currently hiding all the button containing div. letter this will disabled to have custom buttons-->
-            <xpath expr="//div[@name='button_box']" position="attributes">
-                <attribute name="invisible">1</attribute>
+            <!--hiding third stat button. Hiding second button is not necessary as it is already set a invisible true by Odoo-->
+            <xpath expr="//div[@name='button_box']/button[3]" position="attributes">
+                <attribute name="invisible">2</attribute>
             </xpath>
 
             <!--            this will replace all stat buttons and add custom button.-->
-            <!--            <xpath expr="//div[@name='button_box']/button" position="replace">-->
-            <!--                <button class="oe_stat_button" name="your_custom_action" type="object" icon="fa-custom-icon">-->
-            <!--                    <div class="o_field_widget o_stat_info">-->
-            <!--                        <span class="o_stat_value">-->
-            <!--                            <field name="your_custom_field" nolabel="1"/>-->
-            <!--                        </span>-->
-            <!--                        <span class="o_stat_text">Your Label</span>-->
-            <!--                    </div>-->
-            <!--                </button>-->
-            <!--            </xpath>-->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-tasks">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">All Tasks</span>
+                    </div>
+                </button>
+
+                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-sitemap">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Parent Tasks</span>
+                    </div>
+                </button>
+
+                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">3W</span>
+                    </div>
+                </button>
+
+                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-calendar">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">Attendance</span>
+                    </div>
+                </button>
+
+                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-bar-chart">
+                    <div class="o_field_widget o_stat_info">
+                        <span class="o_stat_text">KPI</span>
+                    </div>
+                </button>
+
+            </xpath>
+
 
             <xpath expr="//field[@name='label_tasks']" position="attributes">
                 <attribute name="invisible">1</attribute>
