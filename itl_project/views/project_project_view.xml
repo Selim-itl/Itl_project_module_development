@@ -6,7 +6,7 @@
         <field name="context">{'default_allow_billable': 0}</field>
     </record>
 
-<!--    hiding bottom settings where billable and timesheet field checkbox appear-->
+    <!--    hiding bottom settings where billable and timesheet field checkbox appear-->
     <record id="project_project_view_form_simplified_inherit_timesheet_itl" model="ir.ui.view">
         <field name="name">project.project.view.form.simplified.inherit.timesheet.itl</field>
         <field name="model">project.project</field>
@@ -20,7 +20,7 @@
     </record>
 
 
-<!--    Hiding company from project creation form-->
+    <!--    Hiding company from project creation form-->
     <record id="project_project_view_form_simplified_inherit__itl" model="ir.ui.view">
         <field name="name">project.project.view.form.simplified.inherit.itl</field>
         <field name="model">project.project</field>
@@ -30,14 +30,25 @@
 
             <xpath expr="//field[@name='user_id']" position="after">
                 <field name="company_id" invisible="1"/>
-<!--                <group>-->
-<!--                    <group>-->
-<!--                        <field name="partner_id"/>-->
-<!--                    </group>-->
-<!--                </group>-->
+                <!--                <group>-->
+                <!--                    <group>-->
+                <!--                        <field name="partner_id"/>-->
+                <!--                    </group>-->
+                <!--                </group>-->
             </xpath>
 
         </field>
     </record>
+
+<!--    <record id="project.open_view_project_all_config_group_stage" model="ir.actions.act_window">-->
+<!--        <field name="view_id" ref="project.view_project"/> &lt;!&ndash; Force Tree view &ndash;&gt;-->
+<!--        <field name="view_mode">tree,kanban,form,calendar,activity</field>-->
+<!--    </record>-->
+
+<!--    <record id="project.open_view_project_all_config" model="ir.actions.act_window">-->
+<!--        <field name="view_id" ref="project.view_project"/> &lt;!&ndash; Also force Tree here &ndash;&gt;-->
+<!--        <field name="view_mode">tree,kanban,form,calendar,activity</field>-->
+<!--    </record>-->
+
 
 </odoo>
