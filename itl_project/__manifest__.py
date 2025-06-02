@@ -5,10 +5,12 @@
     'version': '16.0.0',
     'depends': ['base', 'project', 'sale_project', 'hr_timesheet'],
     'data': [
+        'security/ir.model.access.csv',
         'views/project_project_inherit.xml',
         'views/project_task_inherit_view.xml',
         'views/hr_timesheet_inherit_view.xml',
         'views/project_project_view.xml',
+        'views/Project_KPI_views.xml',
     ],
     'images': [
         'static/description/app-banner.jpg'

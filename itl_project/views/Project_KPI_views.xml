@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="form_project_kpi_view" model="ir.ui.view">
+        <field name="name">project.kpi.form</field>
+        <field name="model">project.kpi</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="name"/>
+                    <field name="target_kpi"/>
+                    <field name="before_kpi"/>
+                    <field name="current_month"/>
+                    <field name="achievement"/>
+                    <field name="remarks"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="tree_project_kpi_view" model="ir.ui.view">
+        <field name="name">project.kpi.tree</field>
+        <field name="model">project.kpi</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="target_kpi"/>
+                <field name="before_kpi"/>
+                <field name="current_month"/>
+                <field name="achievement"/>
+                <field name="remarks"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_project_kpi_view" model="ir.actions.act_window">
+        <field name="name">Project KPI</field>
+        <field name="res_model">project.kpi</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>
