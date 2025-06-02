@@ -83,5 +83,6 @@
 
 <!--        </field>-->
 <!--    </record>-->
-
+attrs="{'invisible' : ['|', '|', ('allow_subtasks', '=', False),
+    ('id', '=', False), ('subtask_count', '=', 0)]}"
 </odoo>

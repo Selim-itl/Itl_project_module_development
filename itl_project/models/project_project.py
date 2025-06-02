@@ -136,7 +136,7 @@ class ProjectTask(models.Model):
     _order = 'sequence, id'
 
     task_start_date = fields.Date(string='Start date')
-
+    user_ids = fields.Many2many(string='Assigned To')
     # Works with stage calculation
     task_stages = fields.Selection([
         ('not_started', 'Not started'),

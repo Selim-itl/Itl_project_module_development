@@ -4,7 +4,7 @@
     <data>
         <!--    activating default groud by-->
         <record id="project.act_project_project_2_project_task_all" model="ir.actions.act_window">
-            <field name="context">{'search_default_groupby_ancestor_task':0}</field>
+            <field name="context">{'search_default_groupby_ancestor_task':0, 'default_project_id': active_id}</field>
         </record>
 
         <!--    re-ordering kanban view sequence -->
@@ -104,6 +104,10 @@
                 <!--                Hiding sub-task if parent_id is having value-->
                 <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
                     <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='display_project_id']" position="attributes">
+                    <attribute name="attrs">{'invisible': 1}</attribute>
                 </xpath>
 
                 <xpath expr="//page[@name='task_dependencies']" position="attributes">
