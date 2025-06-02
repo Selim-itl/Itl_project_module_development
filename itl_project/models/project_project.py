@@ -51,6 +51,27 @@ class ProjectProject(models.Model):
         string="Sponsor"
     )
 
+    # Method to open all parent tasks
+    def action_stat_button_parent_tasks(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Parent Tasks',
+            'res_model': 'project.task',
+            'view_mode': 'tree,form',
+            'domain': [
+                ('project_id', '=', self.id),
+                ('parent_id', '=', False)
+            ],
+            'context': {
+                'default_project_id': self.id
+            },
+        }
+
+    def action_stat_button_method(self):
+        for rec in self:
+            print("Method executed successfully!")
+
     def action_stat_button_all_tasks(self):
         for rec in self:
             print("Method executed successfully!")

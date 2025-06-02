@@ -136,25 +136,25 @@
                     </div>
                 </button>
 
-                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-sitemap">
+                <button name="action_stat_button_parent_tasks" type="object" class="oe_stat_button" icon="fa-sitemap">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">Parent Tasks</span>
                     </div>
                 </button>
 
-                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
+                <button name="action_stat_button_method" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">3W</span>
                     </div>
                 </button>
 
-                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-calendar">
+                <button name="action_stat_button_method" type="object" class="oe_stat_button" icon="fa-calendar">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">Attendance</span>
                     </div>
                 </button>
 
-                <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-bar-chart">
+                <button name="action_stat_button_method" type="object" class="oe_stat_button" icon="fa-bar-chart">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">KPI</span>
                     </div>
