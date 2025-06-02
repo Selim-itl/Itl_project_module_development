@@ -128,14 +128,14 @@
                 <attribute name="invisible">2</attribute>
             </xpath>
 
-            <!--            this will replace all stat buttons and add custom button.-->
+            <!--            Open all taks and sub-tasks.-->
             <xpath expr="//div[@name='button_box']" position="inside">
                 <button name="action_stat_button_all_tasks" type="object" class="oe_stat_button" icon="fa-tasks">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">All Tasks</span>
                     </div>
                 </button>
-
+<!--                Open all parent tasks only-->
                 <button name="action_stat_button_parent_tasks" type="object" class="oe_stat_button" icon="fa-sitemap">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">Parent Tasks</span>
@@ -154,7 +154,8 @@
                     </div>
                 </button>
 
-                <button name="action_stat_button_method" type="object" class="oe_stat_button" icon="fa-bar-chart">
+<!--                Open KPI-->
+                <button name="action_view_kpi" type="object" class="oe_stat_button" icon="fa-bar-chart">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">KPI</span>
                     </div>

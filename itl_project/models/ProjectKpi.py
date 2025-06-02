@@ -10,3 +10,4 @@ class ProjectKPI(models.Model):
     current_month = fields.Integer("Current Month")
     achievement = fields.Float("Achievement")
     remarks = fields.Char("Remarks")
+    project_id = fields.Many2one("project.project", "Project")

@@ -50,6 +50,19 @@ class ProjectProject(models.Model):
         "user_id",
         string="Sponsor"
     )
+    # Method to open KPI form and tree views
+    def action_view_kpi(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Project KPIs',
+            'res_model': 'project.kpi',
+            'view_mode': 'tree,form',
+            'domain': [('project_id', '=', self.id)],  # Optional if KPIs are per project
+            'context': {
+                'default_project_id': self.id
+            },
+        }
 
     #Display all task and sub-task of current project
     def action_stat_button_all_tasks(self):

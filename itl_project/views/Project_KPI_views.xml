@@ -8,12 +8,18 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <field name="name"/>
-                    <field name="target_kpi"/>
-                    <field name="before_kpi"/>
-                    <field name="current_month"/>
-                    <field name="achievement"/>
-                    <field name="remarks"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="target_kpi"/>
+                            <field name="before_kpi"/>
+                        </group>
+                        <group>
+                            <field name="current_month"/>
+                            <field name="achievement"/>
+                            <field name="remarks"/>
+                        </group>
+                    </group>
                 </sheet>
             </form>
         </field>
