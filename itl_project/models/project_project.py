@@ -35,19 +35,13 @@ class ProjectProject(models.Model):
         ('in_progress', 'In progress'),
         ('completed', 'Completed')], default='not_started', string="Status", compute="_compute_project_stages")
 
-    project_coordinator = fields.Many2many(
+    project_coordinator = fields.Many2one(
         "res.users",
-        "project_project_coordinator_rel",  # Changed relation table name
-        "project_id",
-        "user_id",
         string="Coordinator"
     )
 
-    project_sponsor = fields.Many2many(
-        "res.users",
-        "project_project_sponsor_rel",  # Changed relation table name
-        "project_id",
-        "user_id",
+    project_sponsor = fields.Many2one(
+        "res.partner",
         string="Sponsor"
     )
     # Method to open KPI form and tree views
