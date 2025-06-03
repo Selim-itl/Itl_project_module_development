@@ -44,6 +44,7 @@ class ProjectProject(models.Model):
         "res.partner",
         string="Sponsor"
     )
+
     # Method to open KPI form and tree views
     def action_view_kpi(self):
         self.ensure_one()
@@ -200,7 +201,22 @@ class ProjectTask(models.Model):
 
     working_days = fields.Integer(string='Allocated Days', compute='_compute_working_days', store=True)
 
-    #Check progress value and change stage if progress is 100
+    allowed_user_ids = fields.Many2many(
+        'res.users',
+        compute='_compute_allowed_user_ids',
+        store=False
+    )
+
+    #Ensures only project members are appears in task assign to form.
+    @api.depends('project_id', 'parent_id')
+    def _compute_allowed_user_ids(self):
+        for task in self:
+            if task.project_id and not task.parent_id:
+                task.allowed_user_ids = task.project_id.assigned_members | task.project_id.project_coordinator
+            else:
+                task.allowed_user_ids = self.env['res.users']
+
+    # Check progress value and change stage if progress is 100
     @api.depends('sub_task_progress')
     def _check_and_change_stage(self):
         for rec in self:
@@ -218,23 +234,6 @@ class ProjectTask(models.Model):
                     rec.task_stages = 'not_started'
                 else:
                     rec.task_stages = 'in_progress'
-
-    @api.onchange('project_id')
-    def _onchange_project_id_limit_users(self):
-        if self.project_id and not self.parent_id:  # Only for parent tasks
-            allowed_users = self.project_id.assigned_members | self.project_id.project_coordinator
-            return {
-                'domain': {
-                    'user_ids': [('id', 'in', allowed_users.ids)]
-                }
-            }
-        else:
-            # No restriction for sub-tasks or tasks without a project
-            return {
-                'domain': {
-                    'user_ids': []
-                }
-            }
 
     #restrict parent task deletion before deleting its sub task/tasks
     def unlink(self):

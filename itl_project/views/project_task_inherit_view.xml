@@ -92,6 +92,13 @@
                     <field name="task_start_date" attrs="{'invisible':[('parent_id','=', False)]}"/>
                 </xpath>
 
+                <xpath expr="//field[@name='user_ids']" position="before">
+                    <field name="allowed_user_ids" invisible="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='user_ids']" position="attributes">
+                    <attribute name="domain">[('id', 'in', allowed_user_ids),('share', '=', False), ('active', '=', True)]</attribute>
+                </xpath>
 
                 <xpath expr="//field[@name='user_ids']" position="after">
                     <field name="task_stages" attrs="{'readonly':[('parent_id','=', False)]}"/>
