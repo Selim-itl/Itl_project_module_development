@@ -2,6 +2,7 @@
 
 <odoo>
 
+    <!--    setting auto billable true to false. This button is under project create form which is hidden by inheriting. Here this is disabled from XML because it has been defined true in action by Odoo -->
     <record id="project.open_create_project" model="ir.actions.act_window">
         <field name="context">{'default_allow_billable': 0}</field>
     </record>
@@ -30,11 +31,6 @@
 
             <xpath expr="//field[@name='user_id']" position="after">
                 <field name="company_id" invisible="1"/>
-                <!--                <group>-->
-                <!--                    <group>-->
-                <!--                        <field name="partner_id"/>-->
-                <!--                    </group>-->
-                <!--                </group>-->
             </xpath>
 
         </field>

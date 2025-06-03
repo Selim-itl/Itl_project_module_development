@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!--    inheriting kanban view and getting icon if project having customer-->
-
     <!--    inheriting and extending project kanban view-->
     <record id="project_kanban_view_inherited" model="ir.ui.view">
         <field name="name">project.kanban.inherited</field>
@@ -19,7 +17,7 @@
                 <field name="not_started_task"/>
             </xpath>
 
-<!--            replacing display_name and placing button over that with style to redirect project form-->
+            <!--            replacing display_name and placing button over that with style to redirect project form-->
             <xpath expr="//span[@t-att-title='record.display_name.value']" position="replace">
                 <button type="object" name="action_open_form_view" class="btn p-0" string="" title="Open form">
                     <span class="o_text_overflow h4 ms-0" t-att-title="record.display_name.value"><t t-esc="record.display_name.value"/></span>
@@ -43,17 +41,6 @@
                 </div>
                 <div><field name="project_progress" widget="progressbar"/></div>
             </xpath>
-
-            <!--            adding project progressbar-->
-<!--            hidden to test name button-->
-<!--            <xpath expr="//div[hasclass('o_primary')]/span[hasclass('o_text_overflow')][2]" position="replace">-->
-<!--                <div><field name="project_progress" widget="progressbar"/></div>-->
-<!--            </xpath>-->
-
-<!--            Button to open from kanban to project form directly-->
-<!--            <button type="object" name="action_open_form_view" class="btn" string="" title="Open form">-->
-<!--                <span class="o_text_overflow" t-att-title="record.display_name.value"><t t-esc="record.display_name.value"/></span>-->
-<!--            </button>-->
 
             <!--            hiding task count created by Odoo-->
             <xpath expr="//a[hasclass('o_project_kanban_box')]" position="attributes">

@@ -4,6 +4,7 @@ class ProjectKPI(models.Model):
     _name = "project.kpi"
     _description = "ITL Project KPI"
 
+    # This module id been used to manage kpi related data
     name = fields.Char("KPI Name")
     target_kpi = fields.Float("Target KPI")
     before_kpi = fields.Float("Before KPI")

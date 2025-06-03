@@ -2,6 +2,7 @@
 
 <odoo>
 
+<!--This file contain form, tree and action views for kpi model-->
     <record id="form_project_kpi_view" model="ir.ui.view">
         <field name="name">project.kpi.form</field>
         <field name="model">project.kpi</field>

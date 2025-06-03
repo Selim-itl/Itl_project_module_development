@@ -92,6 +92,7 @@ class ProjectProject(models.Model):
             },
         }
 
+    # Method to prevent error when clicking dummy stat button
     def action_stat_button_method(self):
         for rec in self:
             print("Method executed successfully!")
@@ -183,13 +184,6 @@ class ProjectTask(models.Model):
         ('not_started', 'Not started'),
         ('in_progress', 'In progress'),
         ('completed', 'Completed')], compute="_check_and_change_stage",default='not_started', string="Stage", tracking=True)
-
-    # task_stages = fields.Selection([
-    #     ('not_started', 'Not started'),
-    #     ('in_progress', 'In progress'),
-    #     ('completed', 'Completed'),
-    #     ('cancelled', 'Cancelled'),
-    #     ('hold', 'Hold')], default='not_started', string="Stage", tracking=True)
 
     sub_task_progress = fields.Integer("Sub-task progress (%)", group_operator=False, default=0,help="Value must be between 0 and 100")
 
@@ -323,50 +317,3 @@ class ProjectTask(models.Model):
                     task.task_stages = 'not_started'
             else:
                 task.task_progress = 0.0
-
-                # Collect child stages
-                # child_stages = [child.task_stages for child in task.child_ids]
-            #     non_cancelled_stages = [s for s in child_stages if s != 'cancelled']
-            #
-            #     if all(s == 'completed' for s in child_stages):
-            #         task.task_stages = 'completed'
-            #     elif all(s == 'not_started' for s in child_stages):
-            #         task.task_stages = 'not_started'
-            #     elif all(s == 'hold' for s in child_stages):
-            #         task.task_stages = 'hold'
-            #     elif all(s == 'cancelled' for s in child_stages):
-            #         task.task_stages = 'cancelled'
-            #     elif non_cancelled_stages:
-            #         if all(s == 'completed' for s in non_cancelled_stages):
-            #             task.task_stages = 'completed'
-            #         elif all(s == 'not_started' for s in non_cancelled_stages):
-            #             task.task_stages = 'not_started'
-            #         elif all(s == 'hold' for s in non_cancelled_stages):
-            #             task.task_stages = 'hold'
-            #         else:
-            #             task.task_stages = 'in_progress'
-            #     else:
-            #         task.task_stages = 'cancelled'  # fallback if all were cancelled
-            # else:
-                # No child tasks — manual stage control or default
-                # task.task_progress = 0.0
-                # if task.task_stages not in ('completed', 'cancelled'):
-                #     task.task_stages = 'not_started'
-
-
-                # progresses = [child.task_stages for child in task.child_ids]
-                # if all(p == "completed" for p in progresses):
-                #     task.task_stages = 'completed'
-                # elif all(p == "not_started" for p in progresses):
-                #     task.task_stages = 'not_started'
-                # elif all(p == "cancelled" for p in progresses):
-                #     task.task_stages = 'cancelled'
-                # elif all(p == "hold" for p in progresses):
-                #     task.task_stages = 'hold'
-                # elif any(p in ["hold","not_started","in_progress"] for p in progresses):
-                #     task.task_stages = 'in_progress'
-                # else:
-                #     task.task_stages = 'not_started'
-
-                # Update task_stages
-

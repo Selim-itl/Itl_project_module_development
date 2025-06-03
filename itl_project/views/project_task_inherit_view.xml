@@ -17,17 +17,19 @@
             <field name="sequence" eval="10"/>
         </record>
 
+        <!--        Inheriting and changing display of task tree view-->
         <record id="view_project_task_tree_inherit_custom" model="ir.ui.view">
             <field name="name">project.task.free.inherit.custom</field>
             <field name="model">project.task</field>
             <field name="inherit_id" ref="project.view_task_tree2"/>
             <field name="arch" type="xml">
 
-                <!--                    working code-->
+                <!--Adding partner to form because it some other field(Immediate bottom tag) depends on it-->
                 <xpath expr="//tree" position="inside">
                     <field name="parent_id" invisible="1"/>
                 </xpath>
 
+                <!--                This required the parent tag to be present in the tree-->
                 <xpath expr="//tree" position="attributes">
                     <attribute name="decoration-info">not parent_id</attribute>
                 </xpath>
@@ -70,6 +72,7 @@
             </field>
         </record>
 
+        <!--        Inheriting and changing the behaviour of task form view -->
         <record id="view_project_task_form_inherit_custom" model="ir.ui.view">
             <field name="name">project.task.form.inherit.custom</field>
             <field name="model">project.task</field>
@@ -186,10 +189,7 @@
                     </page>
                 </xpath>
 
-
-
             </field>
         </record>
-
     </data>
 </odoo>

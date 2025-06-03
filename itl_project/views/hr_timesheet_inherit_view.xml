@@ -2,6 +2,7 @@
 
 <odoo>
 
+    <!--    This a inherited form. This form inheriting task form and add some field to it. Here I am just hiding these fields-->
     <record id="view_project_task_form_hr_timesheet_inherit_custom" model="ir.ui.view">
         <field name="name">project.task.form.hr.timesheet.inherit.custom</field>
         <field name="model">project.task</field>
@@ -35,6 +36,7 @@
         </field>
     </record>
 
+    <!--    This a inherited tree. This form inheriting task tree and add some field to it. Here I am just hiding these fields-->
     <record id="view_project_task_tree_hr_timesheet_inherit_custom" model="ir.ui.view">
         <field name="name">project.task.tree.hr.timesheet.inherit.custom</field>
         <field name="model">project.task</field>
@@ -65,24 +67,7 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
-
-
         </field>
     </record>
 
-<!--    commited to solve install problem 1 June-->
-<!--    <record id="view_task_tree2_inherited_custom" model="ir.ui.view">-->
-<!--        <field name="name">view.task.tree2.inherited.custom</field>-->
-<!--        <field name="model">project.task</field>-->
-<!--        <field name="inherit_id" ref="sale_timesheet.view_task_tree2_inherited"/>-->
-<!--        <field name="arch" type="xml">-->
-
-<!--            <xpath expr="//field[@name='remaining_hours_so']" position="attributes">-->
-<!--                <attribute name="invisible">1</attribute>-->
-<!--            </xpath>-->
-
-<!--        </field>-->
-<!--    </record>-->
-attrs="{'invisible' : ['|', '|', ('allow_subtasks', '=', False),
-    ('id', '=', False), ('subtask_count', '=', 0)]}"
 </odoo>
