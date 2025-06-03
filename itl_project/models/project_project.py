@@ -219,6 +219,23 @@ class ProjectTask(models.Model):
                 else:
                     rec.task_stages = 'in_progress'
 
+    @api.onchange('project_id')
+    def _onchange_project_id_limit_users(self):
+        if self.project_id and not self.parent_id:  # Only for parent tasks
+            allowed_users = self.project_id.assigned_members | self.project_id.project_coordinator
+            return {
+                'domain': {
+                    'user_ids': [('id', 'in', allowed_users.ids)]
+                }
+            }
+        else:
+            # No restriction for sub-tasks or tasks without a project
+            return {
+                'domain': {
+                    'user_ids': []
+                }
+            }
+
     #restrict parent task deletion before deleting its sub task/tasks
     def unlink(self):
         for task in self:
