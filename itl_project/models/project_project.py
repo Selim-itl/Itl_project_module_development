@@ -161,16 +161,16 @@ class ProjectProject(models.Model):
             count = len(top_tasks)
             project.project_progress = round(total / count, 2) if count else 0.0
 
-    # #providing button to kanban for open project settings
-    # def action_open_form_view(self):
-    #     self.ensure_one()  # Ensure only one record is processed
-    #     return {
-    #         'type': 'ir.actions.act_window',
-    #         'res_model': 'project.project',
-    #         'res_id': self.id,
-    #         'view_mode': 'form',
-    #         'target': 'self',
-    #     }
+    # #providing button to kanban for open project settings. This is getting triggered by clicking on project display name.
+    def action_open_form_view(self):
+        self.ensure_one()  # Ensure only one record is processed
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'project.project',
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'self',
+        }
 
 class ProjectTask(models.Model):
     _inherit = 'project.task'

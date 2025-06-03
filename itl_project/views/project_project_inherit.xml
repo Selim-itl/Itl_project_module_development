@@ -2,23 +2,6 @@
 <odoo>
 
     <!--    inheriting kanban view and getting icon if project having customer-->
-    <!--    <record id="project_kanban_view_inherited" model="ir.ui.view">-->
-    <!--        <field name="name">project.kanban.inherited</field>-->
-    <!--        <field name="model">project.project</field>-->
-    <!--        <field name="inherit_id" ref="project.view_project_kanban"/>-->
-    <!--        <field name="arch" type="xml">-->
-
-    <!--            <xpath expr="//div[hasclass('o_primary')]" position="inside">-->
-    <!--                <t t-if="record.partner_id.value">-->
-    <!--                    <span class="o_text_overflow text-info">-->
-    <!--                        <button type="object" name="action_open_form_view"-->
-    <!--                                class="btn btn-primary btn-sm ms-2" icon="fa-arrow-right" title="Open form"/>-->
-    <!--                    </span>-->
-    <!--                </t>-->
-    <!--            </xpath>-->
-
-    <!--        </field>-->
-    <!--    </record>-->
 
     <!--    inheriting and extending project kanban view-->
     <record id="project_kanban_view_inherited" model="ir.ui.view">
@@ -36,8 +19,15 @@
                 <field name="not_started_task"/>
             </xpath>
 
+<!--            replacing display_name and placing button over that with style to redirect project form-->
+            <xpath expr="//span[@t-att-title='record.display_name.value']" position="replace">
+                <button type="object" name="action_open_form_view" class="btn p-0" string="" title="Open form">
+                    <span class="o_text_overflow h4 ms-0" t-att-title="record.display_name.value"><t t-esc="record.display_name.value"/></span>
+                </button>
+            </xpath>
+
             <!-- Enhanced status display after project name -->
-            <xpath expr="//span[@t-att-title='record.display_name.value']" position="after">
+            <xpath expr="//span[@t-if='record.partner_id.value']" position="after">
                 <div t-if="record.project_stages.raw_value" class="mt-2 mb-1">
                     <t t-set="status_info" t-value="{
                         'completed': {'class': 'bg-success text-white', 'text': 'Completed', 'icon': 'fa-check-circle'},
@@ -51,12 +41,19 @@
                         <t t-esc="status_info['text']"/>
                     </span>
                 </div>
+                <div><field name="project_progress" widget="progressbar"/></div>
             </xpath>
 
             <!--            adding project progressbar-->
-            <xpath expr="//div[hasclass('o_primary')]/span[hasclass('o_text_overflow')][2]" position="replace">
-                <div><field name="project_progress" widget="progressbar"/></div>
-            </xpath>
+<!--            hidden to test name button-->
+<!--            <xpath expr="//div[hasclass('o_primary')]/span[hasclass('o_text_overflow')][2]" position="replace">-->
+<!--                <div><field name="project_progress" widget="progressbar"/></div>-->
+<!--            </xpath>-->
+
+<!--            Button to open from kanban to project form directly-->
+<!--            <button type="object" name="action_open_form_view" class="btn" string="" title="Open form">-->
+<!--                <span class="o_text_overflow" t-att-title="record.display_name.value"><t t-esc="record.display_name.value"/></span>-->
+<!--            </button>-->
 
             <!--            hiding task count created by Odoo-->
             <xpath expr="//a[hasclass('o_project_kanban_box')]" position="attributes">
@@ -135,7 +132,7 @@
                         <span class="o_stat_text">All Tasks</span>
                     </div>
                 </button>
-<!--                Open all parent tasks only-->
+                <!--                Open all parent tasks only-->
                 <button name="action_stat_button_parent_tasks" type="object" class="oe_stat_button" icon="fa-sitemap">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">Parent Tasks</span>
@@ -154,7 +151,7 @@
                     </div>
                 </button>
 
-<!--                Open KPI-->
+                <!--                Open KPI-->
                 <button name="action_view_kpi" type="object" class="oe_stat_button" icon="fa-bar-chart">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">KPI</span>
