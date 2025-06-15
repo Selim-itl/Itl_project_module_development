@@ -165,7 +165,7 @@
             </xpath>
 
             <xpath expr="//field[@name='tag_ids']" position="before">
-                <field name="project_coordinator"/>
+                <field name="project_coordinator" widget="many2one_avatar_user"/>
                 <field name="project_sponsor"/>
                 <field name="project_stages"/>
             </xpath>
