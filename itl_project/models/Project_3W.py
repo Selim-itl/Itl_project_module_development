@@ -5,6 +5,7 @@ class Project3W(models.Model):
     _description = "Project 3W"
 
     name = fields.Char("Action Items")
+    project_id = fields.Many2one("project.project", "Project")
     day_date = fields.Date("Date")
     when_date = fields.Date("When")
     responsible = fields.Many2many("res.partner", string="Responsible")

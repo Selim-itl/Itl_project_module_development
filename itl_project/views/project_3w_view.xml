@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="action_project_3w_view" model="ir.actions.act_window">
+        <field name="name">Project 3W</field>
+        <field name="res_model">project.three.w</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>

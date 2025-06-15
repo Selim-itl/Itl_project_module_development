@@ -125,8 +125,8 @@
                         <span class="o_stat_text">Parent Tasks</span>
                     </div>
                 </button>
-
-                <button name="action_stat_button_method" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
+                <!--                Open 3W-->
+                <button name="action_view_3w" type="object" class="oe_stat_button" icon="fa-calendar-check-o">
                     <div class="o_field_widget o_stat_info">
                         <span class="o_stat_text">3W</span>
                     </div>
