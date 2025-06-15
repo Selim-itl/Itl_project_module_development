@@ -23,3 +23,10 @@ class ProjectKPI(models.Model):
     kpi_november = fields.Float("November")
     kpi_december = fields.Float("December")
     additional_note = fields.Text(string='Additional Note')
+    total_achievement = fields.Float("Total Achievement", compute="_count_achievement")
+    achievement_percent = fields.Integer("Achievement (%)")
+
+    @api.depends('kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june','kpi_july', 'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november','kpi_december')
+    def _count_achievement(self):
+        for rec in self:
+            rec.total_achievement = rec.kpi_january + rec.kpi_february + rec.kpi_march + rec.kpi_april + rec.kpi_may + rec.kpi_june + rec.kpi_july + rec.kpi_august + rec.kpi_september + rec.kpi_october + rec.kpi_november + rec.kpi_december

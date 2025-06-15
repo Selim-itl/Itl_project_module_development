@@ -19,6 +19,7 @@
                         </group>
                         <group>
                             <field name="target_kpi"/>
+                            <field name="total_achievement"/>
                         </group>
                     </group>
                     <notebook>
