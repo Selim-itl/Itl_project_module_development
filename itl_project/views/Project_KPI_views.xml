@@ -2,7 +2,7 @@
 
 <odoo>
 
-<!--This file contain form, tree and action views for kpi model-->
+    <!--This file contain form, tree and action views for kpi model-->
     <record id="form_project_kpi_view" model="ir.ui.view">
         <field name="name">project.kpi.form</field>
         <field name="model">project.kpi</field>
@@ -10,17 +10,46 @@
             <form>
                 <sheet>
                     <group>
+                        <field name="name" style="font-size: 20px;" nolabel="1" colspan="2" placeholder="Name of the KPI"/>
+                    </group>
+                    <group>
                         <group>
-                            <field name="name"/>
-                            <field name="target_kpi"/>
                             <field name="before_kpi"/>
-                        </group>
-                        <group>
-                            <field name="current_month"/>
-                            <field name="achievement"/>
                             <field name="remarks"/>
                         </group>
+                        <group>
+                            <field name="target_kpi"/>
+                        </group>
                     </group>
+                    <notebook>
+
+                        <page string="More Info" name="more_info">
+                            <group>
+                                <group>
+                                    <field name="kpi_january"/>
+                                    <field name="kpi_march"/>
+                                    <field name="kpi_may"/>
+                                    <field name="kpi_july"/>
+                                    <field name="kpi_september"/>
+                                    <field name="kpi_november"/>
+                                </group>
+                                <group>
+                                    <field name="kpi_february"/>
+                                    <field name="kpi_april"/>
+                                    <field name="kpi_june"/>
+                                    <field name="kpi_august"/>
+                                    <field name="kpi_october"/>
+                                    <field name="kpi_december"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Additional Note" name="additional_note">
+                            <group>
+                                <field name="additional_note"/>
+                            </group>
+                        </page>
+
+                    </notebook>
                 </sheet>
             </form>
         </field>
@@ -32,11 +61,21 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="target_kpi"/>
                 <field name="before_kpi"/>
-                <field name="current_month"/>
-                <field name="achievement"/>
-                <field name="remarks"/>
+                <field name="target_kpi"/>
+                <field name="remarks" optional="show"/>
+                <field name="kpi_january" optional="show"/>
+                <field name="kpi_february" optional="show"/>
+                <field name="kpi_march" optional="show"/>
+                <field name="kpi_april" optional="show"/>
+                <field name="kpi_may" optional="hide"/>
+                <field name="kpi_june" optional="hide"/>
+                <field name="kpi_july" optional="hide"/>
+                <field name="kpi_august" optional="hide"/>
+                <field name="kpi_september" optional="hide"/>
+                <field name="kpi_october" optional="hide"/>
+                <field name="kpi_november" optional="hide"/>
+                <field name="kpi_december" optional="hide"/>
             </tree>
         </field>
     </record>
