@@ -81,7 +81,7 @@
     </record>
 
     <record id="action_project_kpi_view" model="ir.actions.act_window">
-        <field name="name">Project KPI</field>
+        <field name="name">KPI</field>
         <field name="res_model">project.kpi</field>
         <field name="view_mode">tree,form</field>
     </record>

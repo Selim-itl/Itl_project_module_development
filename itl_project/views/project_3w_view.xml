@@ -2,8 +2,46 @@
 
 <odoo>
 
+    <record id="form_project_3w_view" model="ir.ui.view">
+        <field name="name">project.3w.form</field>
+        <field name="model">project.three.w</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name" style="font-size: 20px;" nolabel="1" colspan="2" placeholder="Action Items"/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="day_date"/>
+                            <field name="when_date"/>
+                        </group>
+                        <group>
+                            <field name="responsible" widget="many2many_tags"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="tree_project_3w_view" model="ir.ui.view">
+        <field name="name">project.3w.tree</field>
+        <field name="model">project.three.w</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="day_date"/>
+                <field name="name"/>
+                <field name="responsible" widget="many2many_tags"/>
+                <field name="when_date"/>
+                <field name="status" widget="badge" decoration-success="status == 'completed'" decoration-info="status == 'in_progress'" decoration-warning="status == 'not_started'"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="action_project_3w_view" model="ir.actions.act_window">
-        <field name="name">Project 3W</field>
+        <field name="name">3W</field>
         <field name="res_model">project.three.w</field>
         <field name="view_mode">tree,form</field>
     </record>

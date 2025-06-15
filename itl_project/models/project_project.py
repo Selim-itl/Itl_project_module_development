@@ -50,7 +50,7 @@ class ProjectProject(models.Model):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Project KPIs',
+            'name': 'KPI',
             'res_model': 'project.kpi',
             'view_mode': 'tree,form',
             'domain': [('project_id', '=', self.id)],  # Optional if KPIs are per project
@@ -64,7 +64,7 @@ class ProjectProject(models.Model):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Project 3W',
+            'name': '3W',
             'res_model': 'project.three.w',
             'view_mode': 'tree,form',
             'domain': [('project_id', '=', self.id)],  # Optional if KPIs are per project
