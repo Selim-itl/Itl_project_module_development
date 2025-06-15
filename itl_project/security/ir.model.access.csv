@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 itl_project.access_project_kpi,access_project_kpi,itl_project.model_project_kpi,base.group_user,1,1,1,1
+itl_project.access_project_three_w,access_project_three_w,itl_project.model_project_three_w,base.group_user,1,1,1,1
