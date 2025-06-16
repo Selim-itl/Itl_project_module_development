@@ -106,6 +106,24 @@ class ProjectProject(models.Model):
             },
         }
 
+    # Method to open all parent tasks
+    def action_stat_button_attendance(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Attendance',
+            'res_model': 'project.attendance.sheet',
+            'view_mode': 'tree,form',
+            'domain': [
+                ('project_id', '=', self.id)
+            ],
+            'context': {
+                'default_project_id': self.id
+            },
+        }
+
+
+
     # Method to prevent error when clicking dummy stat button
     def action_stat_button_method(self):
         for rec in self:
