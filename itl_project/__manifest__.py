@@ -12,6 +12,7 @@
         'views/project_project_view.xml',
         'views/Project_KPI_views.xml',
         'views/project_3w_view.xml',
+        'views/project_attendance_view.xml',
     ],
     'images': [
         'static/description/app-banner.jpg'
