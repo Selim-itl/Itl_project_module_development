@@ -27,7 +27,6 @@ class ProjectAttendanceLine(models.Model):
         string="User",
         required=True
     )
-    allowed_user_ids = fields.Many2many('res.users', compute='_compute_allowed_user_ids', store=False)
     department_id = fields.Many2one('hr.department', string="Department", compute='_compute_department', store=True)
     role = fields.Selection([
         ('leader', 'Leader'),
@@ -39,17 +38,6 @@ class ProjectAttendanceLine(models.Model):
         ('absent', 'Absent'),
         ('leave', 'Leave')
     ], string="Status", required=True)
-
-    """Collecting only these users which are assigned to a certain project."""
-    @api.depends('sheet_id.project_id')
-    def _compute_allowed_user_ids(self):
-        for rec in self:
-            users = self.env['res.users']
-            if rec.sheet_id.project_id:
-                project = rec.sheet_id.project_id
-                users = (project.user_id | project.project_coordinator | project.assigned_members).sudo()
-            # Joining all assigned entities and exclude duplicate with super admin permission by using sudo()
-            rec.allowed_user_ids = users
 
     """Getting users department if they are employee else returning False"""
     @api.depends('user_id')
@@ -76,6 +64,7 @@ class ProjectAttendanceLine(models.Model):
             else:
                 rec.role = False
 
+    """Fetch only unique users in the result. Now only which users are not selected will get appeared in the result."""
     @api.onchange('sheet_id', 'user_id')
     def _onchange_user_id(self):
         if self.sheet_id and self.sheet_id.project_id:
@@ -96,6 +85,6 @@ class ProjectAttendanceLine(models.Model):
         # ⚡ Always return something, even if condition fails
         return {
             'domain': {
-                'user_id': []  # or no restriction
+                'user_id': []
             }
         }

@@ -19,7 +19,6 @@
                             <field name="department_id"/>
                             <field name="role"/>
                             <field name="status"/>
-                            <field name="allowed_user_ids" invisible="1"/>
                         </tree>
                         <form>
                             <group>
@@ -28,7 +27,6 @@
                                     <field name="department_id"/>
                                     <field name="role"/>
                                     <field name="status"/>
-                                    <field name="allowed_user_ids" invisible="1"/>
                                 </group>
                             </group>
                         </form>
