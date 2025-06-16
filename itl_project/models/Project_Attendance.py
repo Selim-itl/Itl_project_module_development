@@ -25,8 +25,7 @@ class ProjectAttendanceLine(models.Model):
     user_id = fields.Many2one(
         'res.users',
         string="User",
-        required=True,
-        domain="[('id', 'in', allowed_user_ids)]"
+        required=True
     )
     allowed_user_ids = fields.Many2many('res.users', compute='_compute_allowed_user_ids', store=False)
     department_id = fields.Many2one('hr.department', string="Department", compute='_compute_department', store=True)
@@ -76,3 +75,27 @@ class ProjectAttendanceLine(models.Model):
                     rec.role = False
             else:
                 rec.role = False
+
+    @api.onchange('sheet_id', 'user_id')
+    def _onchange_user_id(self):
+        if self.sheet_id and self.sheet_id.project_id:
+            project = self.sheet_id.project_id
+            used_user_ids = [
+                line.user_id.id for line in self.sheet_id.attendance_line_ids
+                if line.id != self.id and line.user_id
+            ]
+            assigned_user_ids = (project.user_id | project.project_coordinator | project.assigned_members).ids
+            available_user_ids = list(set(assigned_user_ids) - set(used_user_ids))
+
+            return {
+                'domain': {
+                    'user_id': [('id', 'in', available_user_ids)]
+                }
+            }
+
+        # ⚡ Always return something, even if condition fails
+        return {
+            'domain': {
+                'user_id': []  # or no restriction
+            }
+        }
