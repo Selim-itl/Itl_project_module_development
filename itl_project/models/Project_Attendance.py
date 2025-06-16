@@ -7,13 +7,14 @@ class ProjectAttendanceSheet(models.Model):
 
     name = fields.Char(string="Description", compute="_compute_name", store=True)
     project_id = fields.Many2one('project.project', string="Project", required=True)
-    attendance_date = fields.Date(string="Attendance Date", required=True, default=fields.Date.context_today)
+    attendance_date = fields.Date(string="Attendance Date", required=True)
     attendance_line_ids = fields.One2many('project.attendance.line', 'sheet_id', string="Attendance Lines")
 
+    """Generating title or name or description for each record based on date and project name"""
     @api.depends('project_id', 'attendance_date')
     def _compute_name(self):
         for rec in self:
-            rec.name = f"Attendance for {rec.project_id.name} on {rec.attendance_date}"
+            rec.name = f"Attendance for {rec.project_id.name} on {rec.attendance_date if rec.attendance_date else "0000-00-00"}"
 
 
 class ProjectAttendanceLine(models.Model):
@@ -40,7 +41,7 @@ class ProjectAttendanceLine(models.Model):
         ('leave', 'Leave')
     ], string="Status", required=True)
 
-    """Collecting only these users which are present in a certain project."""
+    """Collecting only these users which are assigned to a certain project."""
     @api.depends('sheet_id.project_id')
     def _compute_allowed_user_ids(self):
         for rec in self:
@@ -48,14 +49,16 @@ class ProjectAttendanceLine(models.Model):
             if rec.sheet_id.project_id:
                 project = rec.sheet_id.project_id
                 users = (project.user_id | project.project_coordinator | project.assigned_members).sudo()
+            # Joining all assigned entities and exclude duplicate with super admin permission by using sudo()
             rec.allowed_user_ids = users
 
-    """Getting users department if they are employee"""
+    """Getting users department if they are employee else returning False"""
     @api.depends('user_id')
     def _compute_department(self):
         for rec in self:
             employee = self.env['hr.employee'].search([('user_id', '=', rec.user_id.id)], limit=1)
             rec.department_id = employee.department_id.id if employee else False
+            #the department_id of employee.department_id is written in hr.employee.base model and this model is inherited by hr.employee model class.
 
     """Collecting users role from the project they are assigned to"""
     @api.depends('sheet_id.project_id', 'user_id')
