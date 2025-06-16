@@ -46,30 +46,30 @@ class ProjectKPI(models.Model):
     def _validating_inputs(self):
         for record in self:
             if not (0 <= record.target_kpi <= 100):
-                raise ValidationError("Target KPI value must be between 0 and 100")
+                raise ValidationError(_("Target KPI value must be between 0 and 100"))
             if not (0 <= record.before_kpi <= 100):
-                raise ValidationError("Before KPI value must be between 0 and 100")
+                raise ValidationError(_("Before KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_january <= 100):
-                raise ValidationError("January KPI value must be between 0 and 100")
+                raise ValidationError(_("January KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_february <= 100):
-                raise ValidationError("February KPI value must be between 0 and 100")
+                raise ValidationError(_("February KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_march <= 100):
-                raise ValidationError("March KPI value must be between 0 and 100")
+                raise ValidationError(_("March KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_april <= 100):
-                raise ValidationError("April KPI value must be between 0 and 100")
+                raise ValidationError(_("April KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_may <= 100):
-                raise ValidationError("May KPI value must be between 0 and 100")
+                raise ValidationError(_("May KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_june <= 100):
-                raise ValidationError("June KPI value must be between 0 and 100")
+                raise ValidationError(_("June KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_july <= 100):
-                raise ValidationError("July KPI value must be between 0 and 100")
+                raise ValidationError(_("July KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_august <= 100):
-                raise ValidationError("August KPI value must be between 0 and 100")
+                raise ValidationError(_("August KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_september <= 100):
-                raise ValidationError("September KPI value must be between 0 and 100")
+                raise ValidationError(_("September KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_october <= 100):
-                raise ValidationError("October KPI value must be between 0 and 100")
+                raise ValidationError(_("October KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_november <= 100):
-                raise ValidationError("November KPI value must be between 0 and 100")
+                raise ValidationError(_("November KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_december <= 100):
-                raise ValidationError("December KPI value must be between 0 and 100")
+                raise ValidationError(_("December KPI value must be between 0 and 100"))
