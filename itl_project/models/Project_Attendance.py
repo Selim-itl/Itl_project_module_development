@@ -23,7 +23,8 @@ class ProjectAttendanceSheet(models.Model):
         for rec in self:
             rec.name = f"Attendance for {rec.project_id.name} on {rec.attendance_date if rec.attendance_date else "0000-00-00"}"
 
-    """This method will auto fill all assigned persons to attendance line when date will be selected."""
+    """This method will auto fill all assigned persons to attendance line when date will be selected. 
+    It also remove line values if date is changes and re-populate line value."""
     @api.onchange('attendance_date', 'project_id')
     def _onchange_date_project(self):
         if self.attendance_date and self.project_id:
@@ -33,14 +34,21 @@ class ProjectAttendanceSheet(models.Model):
                     self.project_id.assigned_members
             ).sudo()
 
+            # Clear existing lines
+            self.attendance_line_ids = [(5, 0, 0)]
+
+            # Populate new lines
             lines = []
             for user in assigned_users:
                 lines.append((0, 0, {
                     'user_id': user.id,
-                    # department_id and role will auto compute in your line model
+                    # department_id and role will auto-compute
                 }))
 
             self.attendance_line_ids = lines
+        else:
+            # If either date or project is cleared, remove lines
+            self.attendance_line_ids = [(5, 0, 0)]
 
 class ProjectAttendanceLine(models.Model):
     _name = 'project.attendance.line'
