@@ -9,12 +9,17 @@ class ProjectAttendanceSheet(models.Model):
     project_id = fields.Many2one('project.project', string="Project", required=True)
     attendance_date = fields.Date(string="Attendance Date", required=True)
     attendance_line_ids = fields.One2many('project.attendance.line', 'sheet_id', string="Attendance Lines")
+    attendance_date_status = fields.Selection([
+        ('normal', 'Normal day'),
+        ('cancelled', 'Cancelled'),
+        ('weekend', 'Weekend')
+    ], string="Day's status", default='normal')
 
     """Generating title or name or description for each record based on date and project name"""
     @api.depends('project_id', 'attendance_date')
     def _compute_name(self):
         for rec in self:
-            rec.name = f"Attendance for {rec.project_id.name} on {rec.attendance_date if rec.attendance_date else "0000-00-00"}"
+            rec.name = f"Attendance for {rec.project_id.name} project on {rec.attendance_date if rec.attendance_date else "0000-00-00"}"
 
 
 class ProjectAttendanceLine(models.Model):

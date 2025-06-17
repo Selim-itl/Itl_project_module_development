@@ -9,11 +9,16 @@
                 <sheet>
                     <group>
                         <field name="name" style="font-size: 20px; margin-bottom: 20px;" nolabel="1" colspan="2"/>
+                    </group>
+                    <group>
                         <group>
                             <field name="attendance_date"/>
                         </group>
+                        <group>
+                            <field name="attendance_date_status"/>
+                        </group>
                     </group>
-                    <field name="attendance_line_ids">
+                    <field name="attendance_line_ids" attrs="{'invisible':[('attendance_date_status','in',('cancelled', 'weekend'))]}">
                         <tree editable="bottom">
                             <field name="user_id" widget="many2one_avatar_user"/>
                             <field name="department_id"/>
