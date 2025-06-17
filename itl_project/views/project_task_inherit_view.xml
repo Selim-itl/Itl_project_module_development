@@ -40,8 +40,9 @@
                 </xpath>
 
                 <xpath expr="//field[@name='activity_ids']" position="after">
+                    <field name="child_ids" invisible="1"/>
                     <field name="sub_task_progress" widget="progressbar" string="Sub-task(%)" attrs="{'invisible': [('parent_id', '=', False)]}"/>
-                    <field name="task_progress" widget="progressbar" attrs="{'invisible': [('parent_id', '!=', False)]}"/>
+                    <field name="task_progress" widget="progressbar" attrs="{'invisible': [('task_progress', '=', 0)]}" />
                     <field name="task_stages" widget="badge" decoration-success="task_stages == 'completed'" decoration-info="task_stages == 'in_progress'" decoration-warning="task_stages == 'not_started'"/>
                 </xpath>
 
