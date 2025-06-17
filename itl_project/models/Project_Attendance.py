@@ -1,3 +1,5 @@
+from email.policy import default
+
 from odoo import models, fields, api,_
 from odoo.exceptions import ValidationError
 
@@ -19,8 +21,26 @@ class ProjectAttendanceSheet(models.Model):
     @api.depends('project_id', 'attendance_date')
     def _compute_name(self):
         for rec in self:
-            rec.name = f"Attendance for {rec.project_id.name} project on {rec.attendance_date if rec.attendance_date else "0000-00-00"}"
+            rec.name = f"Attendance for {rec.project_id.name} on {rec.attendance_date if rec.attendance_date else "0000-00-00"}"
 
+    """This method will auto fill all assigned persons to attendance line when date will be selected."""
+    @api.onchange('attendance_date', 'project_id')
+    def _onchange_date_project(self):
+        if self.attendance_date and self.project_id:
+            assigned_users = (
+                    self.project_id.user_id |
+                    self.project_id.project_coordinator |
+                    self.project_id.assigned_members
+            ).sudo()
+
+            lines = []
+            for user in assigned_users:
+                lines.append((0, 0, {
+                    'user_id': user.id,
+                    # department_id and role will auto compute in your line model
+                }))
+
+            self.attendance_line_ids = lines
 
 class ProjectAttendanceLine(models.Model):
     _name = 'project.attendance.line'
@@ -42,7 +62,7 @@ class ProjectAttendanceLine(models.Model):
         ('present', 'Present'),
         ('absent', 'Absent'),
         ('leave', 'Leave')
-    ], string="Status", required=True)
+    ], string="Status", required=True, default="present")
 
     """Getting users department if they are employee else returning False"""
     @api.depends('user_id')
