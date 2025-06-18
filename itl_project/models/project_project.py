@@ -106,7 +106,7 @@ class ProjectProject(models.Model):
             },
         }
 
-    # Method to open all parent tasks
+    # Method to open attendance sheet
     def action_stat_button_attendance(self):
         self.ensure_one()
         return {
