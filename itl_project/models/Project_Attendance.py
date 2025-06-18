@@ -12,7 +12,7 @@ class ProjectAttendanceSheet(models.Model):
     attendance_date = fields.Date(string="Attendance Date", required=True)
     attendance_line_ids = fields.One2many('project.attendance.line', 'sheet_id', string="Attendance Lines")
     attendance_date_status = fields.Selection([
-        ('normal', 'Normal day'),
+        ('normal', 'Regular day'),
         ('cancelled', 'Cancelled'),
         ('weekend', 'Weekend')
     ], string="Day's status", default='normal')
@@ -69,7 +69,8 @@ class ProjectAttendanceLine(models.Model):
     status = fields.Selection([
         ('present', 'Present'),
         ('absent', 'Absent'),
-        ('leave', 'Leave')
+        ('leave', 'Leave'),
+        ('late', 'Late')
     ], string="Status", required=True, default="present")
 
     """Getting users department if they are employee else returning False"""

@@ -40,10 +40,25 @@
         </field>
     </record>
 
+    <record id="search_project_3w_view" model="ir.ui.view">
+        <field name="name">project.3w.search</field>
+        <field name="model">project.three.w</field>
+        <field name="arch" type="xml">
+            <search>
+
+                <group expand="0" string="Group By">
+                        <filter string="Group By Status" name="status" context="{'group_by': 'status'}"/>
+                </group>
+
+            </search>
+        </field>
+    </record>
+
     <record id="action_project_3w_view" model="ir.actions.act_window">
         <field name="name">3W</field>
         <field name="res_model">project.three.w</field>
-        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="search_project_3w_view"/>
+        <field name="view_mode">tree,form,search</field>
     </record>
 
 </odoo>
