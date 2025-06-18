@@ -17,6 +17,17 @@ class ProjectAttendanceSheet(models.Model):
         ('weekend', 'Weekend')
     ], string="Day's status", default='normal')
 
+    """If a attendance record got deleted on the same date all the attendance report record of the same date will also deleted from here."""
+    def unlink(self):
+        report_line_model = self.env['project.attendance.report.line']
+        for sheet in self:
+            report_lines = report_line_model.search([
+                ('project_id', '=', sheet.project_id.id),
+                ('attendance_date', '=', sheet.attendance_date)
+            ])
+            report_lines.unlink()
+        return super().unlink()
+
     """Generating title or name or description for each record based on date and project name"""
     @api.depends('project_id', 'attendance_date')
     def _compute_name(self):
