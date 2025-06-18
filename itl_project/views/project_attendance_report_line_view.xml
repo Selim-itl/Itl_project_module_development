@@ -5,11 +5,11 @@
         <field name="name">project.attendance.report.line.tree</field>
         <field name="model">project.attendance.report.line</field>
         <field name="arch" type="xml">
-            <tree string="Attendance Report" create="false">
+            <tree string="Attendance Report" create="false" decoration-danger="status == 'absent'" decoration-warning="status == 'late'">
                 <field name="user_id"/>
                 <field name="department_id"/>
                 <field name="attendance_date"/>
-                <field name="status"/>
+                <field name="status" decoration-danger="status == 'absent'" decoration-warning="status == 'late'" widget="badge"/>
             </tree>
         </field>
     </record>
@@ -20,6 +20,7 @@
         <field name="arch" type="xml">
             <search string="Attendance">
 
+<!--                Performing default group by. Here for date there is another filter. Here I am setting daya as default filter -->
                 <group expand="0" string="Group By">
                         <filter string="Group By Date" name="group_by_date" context="{'group_by': 'attendance_date:day'}"/>
                 </group>
