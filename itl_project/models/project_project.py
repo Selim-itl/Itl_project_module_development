@@ -131,7 +131,7 @@ class ProjectProject(models.Model):
             'res_model': 'project.attendance.report.line',
             'view_mode': 'tree',
             'domain': [('project_id', '=', self.id)],
-            'context': {'default_project_id': self.id},
+            'context': {'default_project_id': self.id, 'search_default_group_by_date': 1},
         }
 
 
