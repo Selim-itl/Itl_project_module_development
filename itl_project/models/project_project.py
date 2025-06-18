@@ -122,6 +122,18 @@ class ProjectProject(models.Model):
             },
         }
 
+    """Method to open attendance report tree view"""
+    def action_view_attendance_report(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Attendance Report',
+            'res_model': 'project.attendance.report.line',
+            'view_mode': 'tree',
+            'domain': [('project_id', '=', self.id)],
+            'context': {'default_project_id': self.id},
+        }
+
 
 
     # Method to prevent error when clicking dummy stat button

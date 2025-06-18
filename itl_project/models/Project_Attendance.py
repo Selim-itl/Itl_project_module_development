@@ -9,7 +9,7 @@ class ProjectAttendanceSheet(models.Model):
 
     name = fields.Char(string="Description", compute="_compute_name", store=True)
     project_id = fields.Many2one('project.project', string="Project", required=True)
-    attendance_date = fields.Date(string="Attendance Date", required=True)
+    attendance_date = fields.Date(string="Attendance Date", required=True, store=True)
     attendance_line_ids = fields.One2many('project.attendance.line', 'sheet_id', string="Attendance Lines")
     attendance_date_status = fields.Selection([
         ('normal', 'Regular day'),
@@ -72,6 +72,17 @@ class ProjectAttendanceLine(models.Model):
         ('leave', 'Leave'),
         ('late', 'Late')
     ], string="Status", required=True, default="present")
+    attendance_date = fields.Date(
+        related='sheet_id.attendance_date',
+        store=True,
+        string='Date'
+    )
+
+    @api.model
+    def create(self, vals):
+        record = super().create(vals)
+        self.env['project.attendance.report.line'].create_from_attendance_line(record)
+        return record
 
     """Getting users department if they are employee else returning False"""
     @api.depends('user_id')
@@ -122,3 +133,40 @@ class ProjectAttendanceLine(models.Model):
                 'user_id': []
             }
         }
+
+class ProjectAttendanceReportLine(models.Model):
+    _name = 'project.attendance.report.line'
+    _description = 'Flattened Attendance Report'
+    _rec_name = 'user_id'
+    _order = 'attendance_date desc'
+
+    project_id = fields.Many2one('project.project', string="Project", required=True)
+    user_id = fields.Many2one('res.users', string="User", required=True)
+    department_id = fields.Many2one('hr.department', string="Department")
+    attendance_date = fields.Date(string="Date", required=True)
+    status = fields.Selection([
+        ('present', 'Present'),
+        ('absent', 'Absent'),
+        ('leave', 'Leave'),
+        ('late', 'Late')
+    ], string="Status")
+
+    @api.model
+    def create_from_attendance_line(self, attendance_line):
+        existing = self.search([
+            ('user_id', '=', attendance_line.user_id.id),
+            ('attendance_date', '=', attendance_line.attendance_date)
+        ], limit=1)
+
+        values = {
+            'user_id': attendance_line.user_id.id,
+            'department_id': attendance_line.department_id.id,
+            'attendance_date': attendance_line.attendance_date,
+            'status': attendance_line.status,
+            'project_id': attendance_line.sheet_id.project_id.id,
+        }
+
+        if existing:
+            existing.write(values)
+        else:
+            self.create(values)
