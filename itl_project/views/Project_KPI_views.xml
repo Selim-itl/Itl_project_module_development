@@ -15,12 +15,11 @@
                     <group>
                         <group>
                             <field name="before_kpi"/>
-                            <field name="total_achievement"/>
-                            <field name="remarks"/>
+                            <field name="achievement_percent"/>
                         </group>
                         <group>
                             <field name="target_kpi"/>
-                            <field name="achievement_percent"/>
+                            <field name="remarks"/>
                         </group>
                     </group>
                     <notebook>

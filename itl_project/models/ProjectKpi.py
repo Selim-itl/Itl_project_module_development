@@ -27,19 +27,39 @@ class ProjectKPI(models.Model):
     total_achievement = fields.Float("Total Achievement", compute="_count_achievement", store=True)
     achievement_percent = fields.Integer("Achievement (%)", compute="_count_achievement_percent")
 
+    kpi_month_number = fields.Integer(
+        string="Months with KPI > 0", compute="_compute_kpi_month_number", store=True
+    )
+
+    """This method count how money month does have kpi value."""
+    @api.depends(
+        'kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june',
+        'kpi_july', 'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december'
+    )
+    def _compute_kpi_month_number(self):
+        for record in self:
+            months = [
+                record.kpi_january, record.kpi_february, record.kpi_march,
+                record.kpi_april, record.kpi_may, record.kpi_june,
+                record.kpi_july, record.kpi_august, record.kpi_september,
+                record.kpi_october, record.kpi_november, record.kpi_december
+            ]
+            record.kpi_month_number = sum(1 for val in months if val > 0)
+
     # Calculate total achievement
     @api.depends('kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june', 'kpi_july',
                  'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december')
     def _count_achievement(self):
         for rec in self:
-            rec.total_achievement = rec.kpi_january + rec.kpi_february + rec.kpi_march + rec.kpi_april + rec.kpi_may + rec.kpi_june + rec.kpi_july + rec.kpi_august + rec.kpi_september + rec.kpi_october + rec.kpi_november + rec.kpi_december
+            avg_kpi = (rec.kpi_january + rec.kpi_february + rec.kpi_march + rec.kpi_april + rec.kpi_may + rec.kpi_june + rec.kpi_july + rec.kpi_august + rec.kpi_september + rec.kpi_october + rec.kpi_november + rec.kpi_december)/rec.kpi_month_number
+            rec.total_achievement = avg_kpi/rec.target_kpi
 
     # Calculate achievement percentage
     @api.depends('kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june', 'kpi_july',
                  'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december')
     def _count_achievement_percent(self):
         for rec in self:
-            rec.achievement_percent = (rec.total_achievement/rec.target_kpi)*100
+            rec.achievement_percent = rec.total_achievement*100
 
     #validation for input values
     @api.constrains('target_kpi', 'before_kpi', 'kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june', 'kpi_july', 'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december')
