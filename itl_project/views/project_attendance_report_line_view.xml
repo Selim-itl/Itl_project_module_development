@@ -9,7 +9,7 @@
                 <field name="user_id"/>
                 <field name="department_id"/>
                 <field name="attendance_date"/>
-                <field name="status" decoration-danger="status == 'absent'" decoration-warning="status == 'late'" widget="badge"/>
+                <field name="status" decoration-success="status == 'present'" decoration-danger="status == 'absent'" decoration-warning="status == 'late'" widget="badge"/>
             </tree>
         </field>
     </record>

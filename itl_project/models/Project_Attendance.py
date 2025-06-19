@@ -17,6 +17,22 @@ class ProjectAttendanceSheet(models.Model):
         ('weekend', 'Weekend')
     ], string="Day's status", default='normal')
 
+    """Delete previous records of attendance report when edit attendance sheet and store updated record to attendance report."""
+    def write(self, vals):
+        result = super().write(vals)
+        for sheet in self:
+            # 🧹 Step 1: Delete old report lines for this project + date
+            self.env['project.attendance.report.line'].search([
+                ('project_id', '=', sheet.project_id.id),
+                ('attendance_date', '=', sheet.attendance_date)
+            ]).unlink()
+
+            # 🔁 Step 2: Recreate report lines based on current attendance lines
+            for line in sheet.attendance_line_ids:
+                self.env['project.attendance.report.line'].create_from_attendance_line(line)
+
+        return result
+
     """If a attendance record got deleted on the same date all the attendance report record of the same date will also deleted from here."""
     def unlink(self):
         report_line_model = self.env['project.attendance.report.line']
