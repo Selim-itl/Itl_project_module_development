@@ -24,6 +24,7 @@
                 <group expand="0" string="Group By">
                         <filter string="Group By Date" name="group_by_date" context="{'group_by': 'attendance_date:day'}"/>
                         <filter string="Group By Member" name="group_by_member" context="{'group_by': 'user_id'}"/>
+                        <filter string="Group By Status" name="group_by_status" context="{'group_by': 'status'}"/>
                 </group>
 
             </search>
