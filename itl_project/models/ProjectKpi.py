@@ -6,9 +6,9 @@ class ProjectKPI(models.Model):
     _description = "ITL Project KPI"
 
     # This module id been used to manage kpi related data
-    name = fields.Char("KPI Name")
-    target_kpi = fields.Float("Target KPI (%)")
-    before_kpi = fields.Float("Before KPI (%)")
+    name = fields.Char("KPI Name", required=True)
+    target_kpi = fields.Float("Target KPI (%)", default=1)
+    before_kpi = fields.Float("Before KPI (%)", default=1)
     remarks = fields.Char("Remarks")
     project_id = fields.Many2one("project.project", "Project")
     kpi_january = fields.Float("January")
