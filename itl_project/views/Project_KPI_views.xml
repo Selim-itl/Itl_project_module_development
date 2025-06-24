@@ -64,7 +64,7 @@
                 <field name="name"/>
                 <field name="before_kpi"/>
                 <field name="target_kpi"/>
-                <field name="achievement_percent"/>
+                <field name="achievement_percent" widget="progressbar"/>
                 <field name="remarks" optional="show"/>
 <!--                <field name="kpi_january" optional="show"/>-->
 <!--                <field name="kpi_february" optional="show"/>-->

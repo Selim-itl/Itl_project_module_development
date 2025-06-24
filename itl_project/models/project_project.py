@@ -18,32 +18,93 @@ class ProjectProject(models.Model):
         compute="_compute_project_progress",
         help="Average progress of all tasks in this project.",
     )
-
     days_count = fields.Integer("Working Days", compute="_compute_working_days_duration", store=True, help="Duration in working days (excluding Fridays)")
     completed_task = fields.Integer("Completed Task", compute='_compute_completed_tasks', store=True)
     in_progress_task = fields.Integer("In-progress Task", compute="_compute_inprogress_tasks", store=True)
     not_started_task = fields.Integer("Not started Task", compute="_compute_not_started_tasks", store=True)
-    assigned_members = fields.Many2many(
-        "res.users",
-        "project_project_member_rel",  # Changed from project_task to project_project
-        "project_id",  # Changed to match project.project's ID field
-        "user_id",
-        string="Members"
-    )
+
     project_stages = fields.Selection([
         ('not_started', 'Not started'),
         ('in_progress', 'In progress'),
         ('completed', 'Completed')], default='not_started', string="Status", compute="_compute_project_stages")
-
-    project_coordinator = fields.Many2one(
-        "res.users",
-        string="Coordinator"
-    )
-
     project_sponsor = fields.Many2one(
         "res.partner",
         string="Sponsor"
     )
+
+    #########
+
+    # Project Leader (senior employees only)
+    project_leader_id = fields.Many2one(
+        'hr.employee',
+        string='Project Leader',
+        domain="[('job_id.name', 'in', ['Chief Executive Officer', 'Chief Operating Officer', 'Regional Managing Director', 'HR Manager', 'HoD Accounts', 'HoD IT', 'HoD Finance', 'HoD CS', 'HoD Dispatch', 'HoD Sales & Marketing'])]",
+        help='Only senior employees can be assigned as project leader.'
+    )
+
+    # Project Coordinator (senior employees only)
+    project_coordinator = fields.Many2one(
+        'hr.employee',
+        string='Project Coordinator',
+        domain="[('job_id.name', 'in', ['Chief Executive Officer', 'Chief Operating Officer', 'Regional Managing Director', 'HR Manager', 'HoD Accounts', 'HoD IT', 'HoD Finance', 'HoD CS', 'HoD Dispatch', 'HoD Sales & Marketing'])]",
+        help='Only senior employees can be assigned as project coordinator.'
+    )
+
+    # Project Members (any employee allowed)
+    assigned_members = fields.Many2many(
+        'hr.employee',
+        'project_project_member_rel',
+        'project_id',
+        'employee_id',
+        string='Project Members',
+        help='Any employee can be a project member.'
+    )
+
+    # Optional computed user fields for use in access rules
+    leader_user_id = fields.Many2one(
+        'res.users',
+        compute='_compute_user_links',
+        store=False
+    )
+    coordinator_user_id = fields.Many2one(
+        'res.users',
+        compute='_compute_user_links',
+        store=False
+    )
+    member_user_ids = fields.Many2many(
+        'res.users',
+        compute='_compute_user_links',
+        store=False,
+        string="Member Users"
+    )
+
+    @api.depends('project_leader_id', 'project_coordinator', 'assigned_members')
+    def _compute_user_links(self):
+        for rec in self:
+            rec.leader_user_id = rec.project_leader_id.user_id if rec.project_leader_id else False
+            rec.coordinator_user_id = rec.project_coordinator.user_id if rec.project_coordinator else False
+            rec.member_user_ids = rec.assigned_members.mapped('user_id')
+
+    # Constraint to restrict leader/coordinator by job title
+    @api.constrains('project_leader_id', 'project_coordinator')
+    def _check_project_roles(self):
+        allowed_positions = [
+            'Chief Executive Officer', 'Chief Operating Officer', 'Regional Managing Director',
+            'HR Manager', 'HoD Accounts', 'HoD IT', 'HoD Finance',
+            'HoD CS', 'HoD Dispatch', 'HoD Sales & Marketing'
+        ]
+        for rec in self:
+            for emp, role in [
+                (rec.project_leader_id, 'leader'),
+                (rec.project_coordinator, 'coordinator')
+            ]:
+                if emp and emp.job_id.name not in allowed_positions:
+                    raise ValidationError(
+                        f"{emp.name} cannot be assigned as project {role} due to their job position."
+                    )
+
+    #########
+
 
     # Method to open KPI form and tree views
     def action_view_kpi(self):
@@ -250,7 +311,13 @@ class ProjectTask(models.Model):
     def _compute_allowed_user_ids(self):
         for task in self:
             if task.project_id and not task.parent_id:
-                task.allowed_user_ids = task.project_id.assigned_members | task.project_id.project_coordinator
+                # Get all employees (members, leader, coordinator)
+                employees = task.project_id.assigned_members \
+                            | task.project_id.project_coordinator \
+                            | task.project_id.project_leader_id
+
+                # Filter those who have a user_id and map to users
+                task.allowed_user_ids = employees.mapped('user_id').filtered(lambda u: u)
             else:
                 task.allowed_user_ids = self.env['res.users']
 

@@ -47,11 +47,15 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
 
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
             <!-- Insert task count with subtasks after date -->
             <xpath expr="//div[@t-if='record.date.raw_value or record.date_start.raw_value']" position="after">
                 <div class="text-muted o_row" title="Total tasks including subtasks">
                     <span class="fa fa-tasks me-2"/>
-                    <span t-esc="record.task_count_with_subtasks.value"/>
+                    <span tf-esc="record.task_count_with_subtasks.value"/>
                     <span class="ms-1">tasks (total)</span>
                 </div>
             </xpath>
@@ -89,11 +93,12 @@
         <field name="arch" type="xml">
 
             <!--            renaming project manager-->
-            <xpath expr="//field[@name='user_id']" position="attributes">
-                <attribute name="string">Project Leader</attribute>
+            <xpath expr="//field[@name='user_id']" position="replace">
+                <field name="project_leader_id" widget="many2one_avatar_user"/>
+
             </xpath>
 
-            <xpath expr="//field[@name='user_id']" position="after">
+            <xpath expr="//field[@name='project_leader_id']" position="after">
                 <field name="assigned_members" widget="many2many_avatar_user"/>
                 <field name="project_progress" widget="progressbar"/>
             </xpath>

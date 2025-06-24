@@ -1,6 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-itl_project.access_project_kpi,access_project_kpi,itl_project.model_project_kpi,base.group_user,1,1,1,1
-itl_project.access_project_three_w,access_project_three_w,itl_project.model_project_three_w,base.group_user,1,1,1,1
-itl_project.access_project_attendance_sheet,access_project_attendance_sheet,itl_project.model_project_attendance_sheet,base.group_user,1,1,1,1
-itl_project.access_project_attendance_line,access_project_attendance_line,itl_project.model_project_attendance_line,base.group_user,1,1,1,1
-itl_project.access_project_attendance_report_line,access_project_attendance_report_line,itl_project.model_project_attendance_report_line,base.group_user,1,1,1,1
+itl_project.access_project_three_w,access_project_three_w,model_project_three_w,base.group_user,1,1,1,1
+itl_project.access_project_kpi,access_project_kpi,model_project_kpi,base.group_user,1,1,1,1
+itl_project.access_project_attendance_sheet,access_project_attendance_sheet,model_project_attendance_sheet,base.group_user,1,1,1,1
+itl_project.access_project_attendance_line,access_project_attendance_line,model_project_attendance_line,base.group_user,1,1,1,1
+itl_project.access_project_attendance_report_line,access_project_attendance_report_line,model_project_attendance_report_line,base.group_user,1,1,1,1

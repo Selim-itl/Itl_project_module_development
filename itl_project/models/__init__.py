@@ -1,3 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import project_project, ProjectKpi, Project_3W, Project_Attendance
+from . import project_project
+from . import project_three_w
+from . import ProjectKpi
+from . import Project_Attendance

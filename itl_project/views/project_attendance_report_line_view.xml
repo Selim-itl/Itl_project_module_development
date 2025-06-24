@@ -5,7 +5,7 @@
         <field name="name">project.attendance.report.line.tree</field>
         <field name="model">project.attendance.report.line</field>
         <field name="arch" type="xml">
-            <tree string="Attendance Report" delete="false" create="false" decoration-danger="status == 'absent'" decoration-warning="status == 'late'">
+            <tree string="Attendance Report" create="false" decoration-danger="status == 'absent'" decoration-warning="status == 'late'">
                 <field name="user_id"/>
                 <field name="department_id"/>
                 <field name="attendance_date"/>

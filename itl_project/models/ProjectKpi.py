@@ -47,12 +47,24 @@ class ProjectKPI(models.Model):
             record.kpi_month_number = sum(1 for val in months if val > 0)
 
     # Calculate total achievement
-    @api.depends('kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june', 'kpi_july',
-                 'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december')
+    @api.depends(
+        'kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june',
+        'kpi_july', 'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december',
+        'kpi_month_number', 'target_kpi'
+    )
     def _count_achievement(self):
         for rec in self:
-            avg_kpi = (rec.kpi_january + rec.kpi_february + rec.kpi_march + rec.kpi_april + rec.kpi_may + rec.kpi_june + rec.kpi_july + rec.kpi_august + rec.kpi_september + rec.kpi_october + rec.kpi_november + rec.kpi_december)/rec.kpi_month_number
-            rec.total_achievement = avg_kpi/rec.target_kpi
+            months = [
+                rec.kpi_january, rec.kpi_february, rec.kpi_march, rec.kpi_april,
+                rec.kpi_may, rec.kpi_june, rec.kpi_july, rec.kpi_august,
+                rec.kpi_september, rec.kpi_october, rec.kpi_november, rec.kpi_december
+            ]
+            kpi_sum = sum(months)
+            kpi_count = rec.kpi_month_number or 1  # fallback to 1 to avoid division by zero
+
+            avg_kpi = kpi_sum / kpi_count
+            target = rec.target_kpi or 1  # avoid division by zero
+            rec.total_achievement = avg_kpi / target
 
     # Calculate achievement percentage
     @api.depends('kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june', 'kpi_july',
