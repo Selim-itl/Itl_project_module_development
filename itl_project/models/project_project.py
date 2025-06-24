@@ -5,6 +5,9 @@ from odoo import models, fields, api,_
 from odoo.exceptions import ValidationError
 from datetime import timedelta
 import logging
+import ast
+from lxml import etree
+
 
 _logger = logging.getLogger(__name__)
 
@@ -38,17 +41,39 @@ class ProjectProject(models.Model):
     project_leader_id = fields.Many2one(
         'hr.employee',
         string='Project Leader',
-        domain="[('job_id.name', 'in', ['Chief Executive Officer', 'Chief Operating Officer', 'Regional Managing Director', 'HR Manager', 'HoD Accounts', 'HoD IT', 'HoD Finance', 'HoD CS', 'HoD Dispatch', 'HoD Sales & Marketing'])]",
-        help='Only senior employees can be assigned as project leader.'
+        domain="[('job_id', 'in', allowed_leader_job_ids)]"
     )
 
     # Project Coordinator (senior employees only)
     project_coordinator = fields.Many2one(
         'hr.employee',
         string='Project Coordinator',
-        domain="[('job_id.name', 'in', ['Chief Executive Officer', 'Chief Operating Officer', 'Regional Managing Director', 'HR Manager', 'HoD Accounts', 'HoD IT', 'HoD Finance', 'HoD CS', 'HoD Dispatch', 'HoD Sales & Marketing'])]",
-        help='Only senior employees can be assigned as project coordinator.'
+        domain="[('job_id', 'in', allowed_coordinator_job_ids)]"
     )
+
+    # New code ****
+
+    allowed_leader_job_ids = fields.Many2many(
+        'hr.job',
+        compute='_compute_allowed_designations',
+        store=False
+    )
+
+    allowed_coordinator_job_ids = fields.Many2many(
+        'hr.job',
+        compute='_compute_allowed_designations',
+        store=False
+    )
+
+    @api.depends()
+    def _compute_allowed_designations(self):
+        leader_jobs = self.env['project.leader.designation'].search([]).mapped('job_id')
+        coordinator_jobs = self.env['project.coordinator.designation'].search([]).mapped('job_id')
+        for rec in self:
+            rec.allowed_leader_job_ids = leader_jobs
+            rec.allowed_coordinator_job_ids = coordinator_jobs
+
+    # New code ****
 
     # Project Members (any employee allowed)
     assigned_members = fields.Many2many(
@@ -60,48 +85,50 @@ class ProjectProject(models.Model):
         help='Any employee can be a project member.'
     )
 
+    # Committed after getting expected leader and coordinator in form
     # Optional computed user fields for use in access rules
-    leader_user_id = fields.Many2one(
-        'res.users',
-        compute='_compute_user_links',
-        store=False
-    )
-    coordinator_user_id = fields.Many2one(
-        'res.users',
-        compute='_compute_user_links',
-        store=False
-    )
-    member_user_ids = fields.Many2many(
-        'res.users',
-        compute='_compute_user_links',
-        store=False,
-        string="Member Users"
-    )
-
-    @api.depends('project_leader_id', 'project_coordinator', 'assigned_members')
-    def _compute_user_links(self):
-        for rec in self:
-            rec.leader_user_id = rec.project_leader_id.user_id if rec.project_leader_id else False
-            rec.coordinator_user_id = rec.project_coordinator.user_id if rec.project_coordinator else False
-            rec.member_user_ids = rec.assigned_members.mapped('user_id')
+    # leader_user_id = fields.Many2one(
+    #     'res.users',
+    #     compute='_compute_user_links',
+    #     store=False
+    # )
+    # coordinator_user_id = fields.Many2one(
+    #     'res.users',
+    #     compute='_compute_user_links',
+    #     store=False
+    # )
+    # member_user_ids = fields.Many2many(
+    #     'res.users',
+    #     compute='_compute_user_links',
+    #     store=False,
+    #     string="Member Users"
+    # )
+    #
+    # @api.depends('project_leader_id', 'project_coordinator', 'assigned_members')
+    # def _compute_user_links(self):
+    #     for rec in self:
+    #         rec.leader_user_id = rec.project_leader_id.user_id if rec.project_leader_id else False
+    #         rec.coordinator_user_id = rec.project_coordinator.user_id if rec.project_coordinator else False
+    #         rec.member_user_ids = rec.assigned_members.mapped('user_id')
+    # Committed after getting expected leader and coordinator in form
 
     # Constraint to restrict leader/coordinator by job title
-    @api.constrains('project_leader_id', 'project_coordinator')
-    def _check_project_roles(self):
-        allowed_positions = [
-            'Chief Executive Officer', 'Chief Operating Officer', 'Regional Managing Director',
-            'HR Manager', 'HoD Accounts', 'HoD IT', 'HoD Finance',
-            'HoD CS', 'HoD Dispatch', 'HoD Sales & Marketing'
-        ]
-        for rec in self:
-            for emp, role in [
-                (rec.project_leader_id, 'leader'),
-                (rec.project_coordinator, 'coordinator')
-            ]:
-                if emp and emp.job_id.name not in allowed_positions:
-                    raise ValidationError(
-                        f"{emp.name} cannot be assigned as project {role} due to their job position."
-                    )
+    # @api.constrains('project_leader_id', 'project_coordinator')
+    # def _check_project_roles(self):
+    #     allowed_positions = [
+    #         'Chief Executive Officer', 'Chief Operating Officer', 'Regional Managing Director',
+    #         'HR Manager', 'HoD Accounts', 'HoD IT', 'HoD Finance',
+    #         'HoD CS', 'HoD Dispatch', 'HoD Sales & Marketing'
+    #     ]
+    #     for rec in self:
+    #         for emp, role in [
+    #             (rec.project_leader_id, 'leader'),
+    #             (rec.project_coordinator, 'coordinator')
+    #         ]:
+    #             if emp and emp.job_id.name not in allowed_positions:
+    #                 raise ValidationError(
+    #                     f"{emp.name} cannot be assigned as project {role} due to their job position."
+    #                 )
 
     #########
 
