@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="form_project_coordinator_view" model="ir.ui.view">
+        <field name="name">project.coordinator.form</field>
+        <field name="model">project.coordinator.designation</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="job_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="tree_project_coordinator_view" model="ir.ui.view">
+        <field name="name">project.coordinator.tree</field>
+        <field name="model">project.coordinator.designation</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="job_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_project_coordinator_view" model="ir.actions.act_window">
+        <field name="name">Coordinator's Designations</field>
+        <field name="res_model">project.coordinator.designation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+            action="action_project_coordinator_view"
+            id="project_menu_coordinator"
+            name="Coordinator's Designations"
+            parent="project.menu_project_config"
+            sequence="80"/>
+
+</odoo>
