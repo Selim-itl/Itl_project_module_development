@@ -5,9 +5,6 @@ from odoo import models, fields, api,_
 from odoo.exceptions import ValidationError
 from datetime import timedelta
 import logging
-import ast
-from lxml import etree
-
 
 _logger = logging.getLogger(__name__)
 
@@ -21,117 +18,47 @@ class ProjectProject(models.Model):
         compute="_compute_project_progress",
         help="Average progress of all tasks in this project.",
     )
+
     days_count = fields.Integer("Working Days", compute="_compute_working_days_duration", store=True, help="Duration in working days (excluding Fridays)")
     completed_task = fields.Integer("Completed Task", compute='_compute_completed_tasks', store=True)
     in_progress_task = fields.Integer("In-progress Task", compute="_compute_inprogress_tasks", store=True)
     not_started_task = fields.Integer("Not started Task", compute="_compute_not_started_tasks", store=True)
-
+    assigned_members = fields.Many2many(
+        "res.users",
+        "project_project_member_rel",  # Changed from project_task to project_project
+        "project_id",  # Changed to match project.project's ID field
+        "user_id",
+        string="Members"
+    )
     project_stages = fields.Selection([
         ('not_started', 'Not started'),
         ('in_progress', 'In progress'),
         ('completed', 'Completed')], default='not_started', string="Status", compute="_compute_project_stages")
+
+    project_coordinator = fields.Many2one(
+        "res.users",
+        string="Coordinator"
+    )
+
     project_sponsor = fields.Many2one(
         "res.partner",
         string="Sponsor"
     )
 
-    #########
+    is_project_leader = fields.Boolean(compute='_compute_is_project_leader')
+    is_project_coordinator = fields.Boolean(compute='_compute_is_project_coordinator')
 
-    # Project Leader (senior employees only)
-    project_leader_id = fields.Many2one(
-        'hr.employee',
-        string='Project Leader',
-        domain="[('job_id', 'in', allowed_leader_job_ids)]"
-    )
+    """Check if current user is the project leader or not. """
+    @api.depends_context('uid')
+    def _compute_is_project_leader(self):
+        for record in self:
+            record.is_project_leader = (record.user_id.id == self.env.uid)
 
-    # Project Coordinator (senior employees only)
-    project_coordinator = fields.Many2one(
-        'hr.employee',
-        string='Project Coordinator',
-        domain="[('job_id', 'in', allowed_coordinator_job_ids)]"
-    )
-
-    # New code ****
-
-    allowed_leader_job_ids = fields.Many2many(
-        'hr.job',
-        compute='_compute_allowed_designations',
-        store=False
-    )
-
-    allowed_coordinator_job_ids = fields.Many2many(
-        'hr.job',
-        compute='_compute_allowed_designations',
-        store=False
-    )
-
-    @api.depends()
-    def _compute_allowed_designations(self):
-        leader_jobs = self.env['project.leader.designation'].search([]).mapped('job_id')
-        coordinator_jobs = self.env['project.coordinator.designation'].search([]).mapped('job_id')
-        for rec in self:
-            rec.allowed_leader_job_ids = leader_jobs
-            rec.allowed_coordinator_job_ids = coordinator_jobs
-
-    # New code ****
-
-    # Project Members (any employee allowed)
-    assigned_members = fields.Many2many(
-        'hr.employee',
-        'project_project_member_rel',
-        'project_id',
-        'employee_id',
-        string='Project Members',
-        help='Any employee can be a project member.'
-    )
-
-    # Committed after getting expected leader and coordinator in form
-    # Optional computed user fields for use in access rules
-    # leader_user_id = fields.Many2one(
-    #     'res.users',
-    #     compute='_compute_user_links',
-    #     store=False
-    # )
-    # coordinator_user_id = fields.Many2one(
-    #     'res.users',
-    #     compute='_compute_user_links',
-    #     store=False
-    # )
-    # member_user_ids = fields.Many2many(
-    #     'res.users',
-    #     compute='_compute_user_links',
-    #     store=False,
-    #     string="Member Users"
-    # )
-    #
-    # @api.depends('project_leader_id', 'project_coordinator', 'assigned_members')
-    # def _compute_user_links(self):
-    #     for rec in self:
-    #         rec.leader_user_id = rec.project_leader_id.user_id if rec.project_leader_id else False
-    #         rec.coordinator_user_id = rec.project_coordinator.user_id if rec.project_coordinator else False
-    #         rec.member_user_ids = rec.assigned_members.mapped('user_id')
-    # Committed after getting expected leader and coordinator in form
-
-    # Constraint to restrict leader/coordinator by job title
-    # @api.constrains('project_leader_id', 'project_coordinator')
-    # def _check_project_roles(self):
-    #     allowed_positions = [
-    #         'Chief Executive Officer', 'Chief Operating Officer', 'Regional Managing Director',
-    #         'HR Manager', 'HoD Accounts', 'HoD IT', 'HoD Finance',
-    #         'HoD CS', 'HoD Dispatch', 'HoD Sales & Marketing'
-    #     ]
-    #     for rec in self:
-    #         for emp, role in [
-    #             (rec.project_leader_id, 'leader'),
-    #             (rec.project_coordinator, 'coordinator')
-    #         ]:
-    #             if emp and emp.job_id.name not in allowed_positions:
-    #                 raise ValidationError(
-    #                     f"{emp.name} cannot be assigned as project {role} due to their job position."
-    #                 )
-
-    #########
-
+    """Check if current user is the project leader or not. """
+    @api.depends_context('uid')
+    def _compute_is_project_coordinator(self):
+        for record in self:
+            record.is_project_coordinator = (record.project_coordinator.id == self.env.uid)
 
     # Method to open KPI form and tree views
     def action_view_kpi(self):
@@ -333,18 +260,29 @@ class ProjectTask(models.Model):
         store=False
     )
 
+    # Block is been using for track who can edit
+    can_edit_fields = fields.Boolean(compute='_compute_can_edit_fields', store=False)
+
+    """This method is ensuring project module's Administrator, project leader and project coordinator can only edit certain field."""
+    @api.depends('project_id')
+    def _compute_can_edit_fields(self):
+        for task in self:
+            user = self.env.user
+            project = task.project_id
+            task.can_edit_fields = bool(project) and (
+                    user.has_group('project.group_project_manager') or
+                    (project.user_id and project.user_id.id == user.id) or
+                    (project.project_coordinator and project.project_coordinator.id == user.id)
+            )
+    # Block is been using for track who can edit
+
+
     #Ensures only project members are appears in task assign to form.
     @api.depends('project_id', 'parent_id')
     def _compute_allowed_user_ids(self):
         for task in self:
             if task.project_id and not task.parent_id:
-                # Get all employees (members, leader, coordinator)
-                employees = task.project_id.assigned_members \
-                            | task.project_id.project_coordinator \
-                            | task.project_id.project_leader_id
-
-                # Filter those who have a user_id and map to users
-                task.allowed_user_ids = employees.mapped('user_id').filtered(lambda u: u)
+                task.allowed_user_ids = task.project_id.assigned_members | task.project_id.project_coordinator | task.project_id.user_id
             else:
                 task.allowed_user_ids = self.env['res.users']
 

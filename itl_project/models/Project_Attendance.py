@@ -52,18 +52,14 @@ class ProjectAttendanceSheet(models.Model):
 
     """This method will auto fill all assigned persons to attendance line when date will be selected. 
     It also remove line values if date is changes and re-populate line value."""
-
     @api.onchange('attendance_date', 'project_id')
     def _onchange_date_project(self):
         if self.attendance_date and self.project_id:
-            # Convert hr.employee to res.users safely
-            employees = (
-                    self.project_id.project_leader_id |
+            assigned_users = (
+                    self.project_id.user_id |
                     self.project_id.project_coordinator |
                     self.project_id.assigned_members
-            ).filtered(lambda e: e.user_id)
-
-            assigned_users = employees.mapped('user_id')
+            ).sudo()
 
             # Clear existing lines
             self.attendance_line_ids = [(5, 0, 0)]
@@ -124,21 +120,16 @@ class ProjectAttendanceLine(models.Model):
             #the department_id of employee.department_id is written in hr.employee.base model and this model is inherited by hr.employee model class.
 
     """Collecting users role from the project they are assigned to"""
-
     @api.depends('sheet_id.project_id', 'user_id')
     def _compute_role(self):
         for rec in self:
             project = rec.sheet_id.project_id
-            if project and rec.user_id:
-                leader = project.project_leader_id.user_id
-                coordinator = project.project_coordinator.user_id
-                members = project.assigned_members.mapped('user_id')
-
-                if rec.user_id == leader:
+            if project:
+                if rec.user_id.id == project.user_id.id:
                     rec.role = 'leader'
-                elif rec.user_id == coordinator:
+                elif rec.user_id.id == project.project_coordinator.id:
                     rec.role = 'coordinator'
-                elif rec.user_id in members:
+                elif rec.user_id in project.assigned_members:
                     rec.role = 'member'
                 else:
                     rec.role = False

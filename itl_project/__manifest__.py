@@ -14,8 +14,6 @@
         'views/project_3w_view.xml',
         'views/project_attendance_view.xml',
         'views/project_attendance_report_line_view.xml',
-        'views/project_leader_view.xml',
-        'views/project_coordinator_view.xml',
     ],
     'images': [
         'static/description/app-banner.jpg'

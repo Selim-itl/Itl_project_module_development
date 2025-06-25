@@ -84,33 +84,43 @@
                     <attribute name="attrs">{'readonly':1}</attribute>
                 </xpath>
 
+                <xpath expr="//button[@name='action_assign_to_me'][1]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
                 <xpath expr="//field[@name='task_properties']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='date_deadline']" position="attributes">
-                    <attribute name="attrs">{'invisible':[('parent_id','=', False)]}</attribute>
+                    <attribute name="attrs">{'invisible':[('parent_id','=', False)], 'readonly': [('can_edit_fields', '=', False)]}</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='date_deadline']" position="before">
-                    <field name="task_start_date" attrs="{'invisible':[('parent_id','=', False)]}"/>
+                    <field name="task_start_date" attrs="{'invisible':[('parent_id','=', False)], 'readonly': [('can_edit_fields', '=', False)]}"/>
                 </xpath>
 
-                <xpath expr="//field[@name='user_ids']" position="before">
+                <xpath expr="//field[@name='allow_subtasks']" position="before">
+                    <field name="can_edit_fields" invisible="1"/>
                     <field name="allowed_user_ids" invisible="1"/>
                 </xpath>
 
                 <xpath expr="//field[@name='user_ids']" position="attributes">
                     <attribute name="domain">[('id', 'in', allowed_user_ids),('share', '=', False), ('active', '=', True)]</attribute>
+                    <attribute name="attrs">{'readonly': [('can_edit_fields', '=', False)]}</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='user_ids']" position="after">
-                    <field name="task_stages" attrs="{'readonly':[('parent_id','=', False)]}"/>
+                    <field name="task_stages" attrs="{'readonly':['|',('parent_id','=', False),('can_edit_fields', '=', False)]}"/>
                     <field name="working_days" attrs="{'invisible':[('parent_id','=', False)]}"/>
                 </xpath>
 
+                <xpath expr="//field[@name='tag_ids']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('can_edit_fields', '=', False)]}</attribute>
+                </xpath>
+
                 <xpath expr="//field[@name='tag_ids']" position="after">
-                    <field name="sub_task_progress" attrs="{'readonly': [('task_stages', 'in', ['not_started', 'completed'])],'invisible': [('parent_id','=', False)]}" force_save="1" string="Progress"/>
+                    <field name="sub_task_progress" attrs="{'readonly': ['|',('task_stages', 'in', ['not_started', 'completed']), ('can_edit_fields', '=', False)],'invisible': [('parent_id','=', False)]}" force_save="1" string="Progress"/>
                     <!--                    hiding sub-task progress when it is parent task and will be readonly when stage is in not_started and completed-->
                     <field name="task_progress" widget="progressbar" attrs="{'editable': ['|','|',('task_stages','!=','in_progress'),('child_ids','!=', True)], 'invisible':[('parent_id','!=', False)]}" string="Progress"/>
                     <!--                    hiding parent task for sub-task and making editable only when task is in progress and is having child-->
@@ -119,6 +129,14 @@
                 <!--                Hiding sub-task if parent_id is having value-->
                 <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
                     <attribute name="attrs">{'invisible': [('parent_id', '!=', False)]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='name']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('can_edit_fields', '=', False)]}</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='priority']" position="attributes">
+                    <attribute name="attrs">{'readonly': [('can_edit_fields', '=', False)]}</attribute>
                 </xpath>
 
                 <xpath expr="//field[@name='display_project_id']" position="attributes">
@@ -186,7 +204,7 @@
 
                 <xpath expr="//page[@name='sub_tasks_page']" position="after">
                     <page name="description_page" string="Description">
-                        <field name="description" type="html" options="{'collaborative': true, 'resizable': false}" placeholder="Task description..."/>
+                        <field name="description" attrs="{'readonly': [('can_edit_fields', '=', False)]}" type="html" options="{'collaborative': true, 'resizable': false}" placeholder="Task description..."/>
                     </page>
                 </xpath>
 
