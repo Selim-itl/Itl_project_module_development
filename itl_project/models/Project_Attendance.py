@@ -17,6 +17,23 @@ class ProjectAttendanceSheet(models.Model):
         ('weekend', 'Weekend')
     ], string="Day's status", default='normal')
 
+    # Block is been using for track who can edit
+    can_edit_fields = fields.Boolean(compute='_compute_can_edit_fields', store=False)
+
+    """This method is ensuring project module's Administrator, project leader and project coordinator can only edit certain field."""
+    @api.depends('project_id')
+    def _compute_can_edit_fields(self):
+        for rec in self:
+            user = self.env.user
+            project = rec.project_id
+            rec.can_edit_fields = bool(project) and (
+                    user.has_group('project.group_project_manager') or
+                    (project.user_id and project.user_id.id == user.id) or
+                    (project.project_coordinator and project.project_coordinator.id == user.id)
+            )
+
+    # Block is been using for track who can edit
+
     """Delete previous records of attendance report when edit attendance sheet and store updated record to attendance report."""
     def write(self, vals):
         result = super().write(vals)

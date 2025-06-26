@@ -20,10 +20,10 @@ class Project3W(models.Model):
     """This method is ensuring project module's Administrator, project leader and project coordinator can only edit certain field."""
     @api.depends('project_id')
     def _compute_can_edit_fields(self):
-        for task in self:
+        for rec in self:
             user = self.env.user
-            project = task.project_id
-            task.can_edit_fields = bool(project) and (
+            project = rec.project_id
+            rec.can_edit_fields = bool(project) and (
                     user.has_group('project.group_project_manager') or
                     (project.user_id and project.user_id.id == user.id) or
                     (project.project_coordinator and project.project_coordinator.id == user.id)
