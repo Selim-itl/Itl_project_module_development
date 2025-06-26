@@ -77,14 +77,21 @@ class ProjectProject(models.Model):
     # Method to open 3W form and tree views
     def action_view_3w(self):
         self.ensure_one()
+        user = self.env.user
+        can_edit = (
+                user.has_group('project.group_project_manager') or
+                (self.user_id and self.user_id.id == user.id) or
+                (self.project_coordinator and self.project_coordinator.id == user.id)
+        )
         return {
             'type': 'ir.actions.act_window',
             'name': '3W',
             'res_model': 'project.three.w',
             'view_mode': 'tree,form',
-            'domain': [('project_id', '=', self.id)],  # Optional if KPIs are per project
+            'domain': [('project_id', '=', self.id)],
             'context': {
-                'default_project_id': self.id
+                'default_project_id': self.id,
+                'default_can_edit_fields': can_edit,
             },
         }
 

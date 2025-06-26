@@ -9,7 +9,7 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="can_edit_fields" invisible="1"/>
+                        <field name="can_edit_fields"/>
                         <field name="name" style="font-size: 20px;" nolabel="1" colspan="2" placeholder="Action Items" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                     </group>
                     <group>

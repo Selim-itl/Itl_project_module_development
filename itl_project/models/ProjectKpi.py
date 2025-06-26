@@ -6,7 +6,8 @@ class ProjectKPI(models.Model):
     _description = "ITL Project KPI"
 
     # This module id been used to manage kpi related data
-    name = fields.Char("KPI Name", required=True)
+    name = fields.Char("KPI Name")
+    # name = fields.Char("KPI Name", required=True)
     target_kpi = fields.Float("Target KPI (%)", default=1)
     before_kpi = fields.Float("Before KPI (%)", default=1)
     remarks = fields.Char("Remarks")
@@ -35,8 +36,8 @@ class ProjectKPI(models.Model):
     can_edit_fields = fields.Boolean(compute='_compute_can_edit_fields', store=False)
 
     """This method is ensuring project module's Administrator, project leader and project coordinator can only edit certain field."""
-    @api.depends('project_id')
-    def _compute_can_edit_fields(self):
+    @api.onchange('project_id')
+    def _onchange_can_edit_fields(self):
         for rec in self:
             user = self.env.user
             project = rec.project_id
