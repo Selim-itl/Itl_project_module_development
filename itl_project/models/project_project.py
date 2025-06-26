@@ -138,16 +138,21 @@ class ProjectProject(models.Model):
     # Method to open attendance sheet
     def action_stat_button_attendance(self):
         self.ensure_one()
+        user = self.env.user
+        can_edit = (
+                user.has_group('project.group_project_manager') or
+                (self.user_id and self.user_id.id == user.id) or
+                (self.project_coordinator and self.project_coordinator.id == user.id)
+        )
         return {
             'type': 'ir.actions.act_window',
             'name': 'Attendance',
             'res_model': 'project.attendance.sheet',
             'view_mode': 'tree,form',
-            'domain': [
-                ('project_id', '=', self.id)
-            ],
+            'domain': [('project_id', '=', self.id)],
             'context': {
-                'default_project_id': self.id
+                'default_project_id': self.id,
+                'default_can_edit_fields': can_edit,
             },
         }
 

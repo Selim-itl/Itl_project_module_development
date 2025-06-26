@@ -18,9 +18,12 @@ class ProjectAttendanceSheet(models.Model):
     ], string="Day's status", default='normal')
 
     # Block is been using for track who can edit
-    can_edit_fields = fields.Boolean(compute='_compute_can_edit_fields', store=False)
+    can_edit_fields = fields.Boolean(
+        string="Can Edit Fields",
+        compute='_compute_can_edit_fields',
+        store=False
+    )
 
-    """This method is ensuring project module's Administrator, project leader and project coordinator can only edit certain field."""
     @api.depends('project_id')
     def _compute_can_edit_fields(self):
         for rec in self:
@@ -31,6 +34,17 @@ class ProjectAttendanceSheet(models.Model):
                     (project.user_id and project.user_id.id == user.id) or
                     (project.project_coordinator and project.project_coordinator.id == user.id)
             )
+
+    @api.onchange('project_id')
+    def _onchange_can_edit_fields(self):
+        self._compute_can_edit_fields()
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        if 'can_edit_fields' in fields_list and 'default_can_edit_fields' in self.env.context:
+            res['can_edit_fields'] = self.env.context.get('default_can_edit_fields')
+        return res
 
     # Block is been using for track who can edit
 
