@@ -9,16 +9,17 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="name" style="font-size: 20px;" nolabel="1" colspan="2" placeholder="Action Items"/>
+                        <field name="can_edit_fields" invisible="1"/>
+                        <field name="name" style="font-size: 20px;" nolabel="1" colspan="2" placeholder="Action Items" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                     </group>
                     <group>
                         <group>
-                            <field name="day_date"/>
-                            <field name="when_date"/>
+                            <field name="day_date" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                            <field name="when_date" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                         </group>
                         <group>
-                            <field name="responsible" widget="many2many_tags"/>
-                            <field name="status"/>
+                            <field name="responsible" widget="many2many_tags" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                            <field name="status" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                         </group>
                     </group>
                 </sheet>
