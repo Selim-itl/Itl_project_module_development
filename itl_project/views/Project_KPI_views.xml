@@ -10,16 +10,17 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="name" style="font-size: 20px;" nolabel="1" colspan="2" placeholder="Name of the KPI"/>
+                        <field name="can_edit_fields" invisible="1"/>
+                        <field name="name" style="font-size: 20px;" nolabel="1" colspan="2" placeholder="Name of the KPI" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                     </group>
                     <group>
                         <group>
-                            <field name="before_kpi"/>
+                            <field name="before_kpi" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                             <field name="achievement_percent"/>
                         </group>
                         <group>
-                            <field name="target_kpi"/>
-                            <field name="remarks"/>
+                            <field name="target_kpi" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                            <field name="remarks" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                         </group>
                     </group>
                     <notebook>
@@ -27,26 +28,26 @@
                         <page string="More Info" name="more_info">
                             <group>
                                 <group>
-                                    <field name="kpi_january"/>
-                                    <field name="kpi_march"/>
-                                    <field name="kpi_may"/>
-                                    <field name="kpi_july"/>
-                                    <field name="kpi_september"/>
-                                    <field name="kpi_november"/>
+                                    <field name="kpi_january" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_march" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_may" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_july" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_september" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_november" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                                 </group>
                                 <group>
-                                    <field name="kpi_february"/>
-                                    <field name="kpi_april"/>
-                                    <field name="kpi_june"/>
-                                    <field name="kpi_august"/>
-                                    <field name="kpi_october"/>
-                                    <field name="kpi_december"/>
+                                    <field name="kpi_february" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_april" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_june" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_august" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_october" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
+                                    <field name="kpi_december" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                                 </group>
                             </group>
                         </page>
                         <page string="Additional Note" name="additional_note">
                             <group>
-                                <field name="additional_note"/>
+                                <field name="additional_note" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                             </group>
                         </page>
 

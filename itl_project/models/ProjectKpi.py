@@ -31,6 +31,23 @@ class ProjectKPI(models.Model):
         string="Months with KPI > 0", compute="_compute_kpi_month_number", store=True
     )
 
+    # Block is been using for track who can edit
+    can_edit_fields = fields.Boolean(compute='_compute_can_edit_fields', store=False)
+
+    """This method is ensuring project module's Administrator, project leader and project coordinator can only edit certain field."""
+    @api.depends('project_id')
+    def _compute_can_edit_fields(self):
+        for rec in self:
+            user = self.env.user
+            project = rec.project_id
+            rec.can_edit_fields = bool(project) and (
+                    user.has_group('project.group_project_manager') or
+                    (project.user_id and project.user_id.id == user.id) or
+                    (project.project_coordinator and project.project_coordinator.id == user.id)
+            )
+
+    # Block is been using for track who can edit
+
     """This method count how money month does have kpi value."""
     @api.depends(
         'kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june',
