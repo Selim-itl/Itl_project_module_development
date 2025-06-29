@@ -1,12 +1,12 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, AccessError
 
 class ProjectKPI(models.Model):
     _name = "project.kpi"
     _description = "ITL Project KPI"
 
     # This module id been used to manage kpi related data
-    name = fields.Char("KPI Name")
+    name = fields.Char("KPI Name", required=True)
     # name = fields.Char("KPI Name", required=True)
     target_kpi = fields.Float("Target KPI (%)", default=1)
     before_kpi = fields.Float("Before KPI (%)", default=1)
@@ -135,3 +135,24 @@ class ProjectKPI(models.Model):
                 raise ValidationError(_("November KPI value must be between 0 and 100"))
             if not (0 <= record.kpi_december <= 100):
                 raise ValidationError(_("December KPI value must be between 0 and 100"))
+
+    # Block ensuring proper access right
+    """Conditionally checking whether the user should have permissions to delete, duplicate, edit"""
+    def check_user_role(self):
+        for record in self:
+            if not record.can_edit_fields:
+                raise AccessError("You do not have permission to modify this project.")
+
+    def write(self, vals):
+        self.check_user_role()
+        return super().write(vals)
+
+    def unlink(self):
+        self.check_user_role()
+        return super().unlink()
+
+    def copy(self, default=None):
+        self.check_user_role()
+        return super().copy(default)
+
+    # Block ensuring proper access right
