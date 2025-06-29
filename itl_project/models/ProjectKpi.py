@@ -35,6 +35,7 @@ class ProjectKPI(models.Model):
     # Block is been using for track who can edit
     can_edit_fields = fields.Boolean(compute='_compute_can_edit_fields', store=False)
 
+    """Method is been used to calculate which boolean field for allowing administrator, leader and coordinator to manage records"""
     @api.depends('project_id')
     def _compute_can_edit_fields(self):
         for rec in self:
@@ -46,10 +47,12 @@ class ProjectKPI(models.Model):
                     (project.project_coordinator and project.project_coordinator.id == user.id)
             )
 
+    """Will get triggered automatically when project_id will be added/changed"""
     @api.onchange('project_id')
     def _onchange_can_edit_fields(self):
         self._compute_can_edit_fields()
 
+    """Setting the can_edit_fields value when the form gets loaded. It is userful in terms of loading the form for the first time. Without this block the value of that filed will always be false when the form get loaded for the first time."""
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
@@ -59,7 +62,7 @@ class ProjectKPI(models.Model):
 
     # Block is been using for track who can edit
 
-    """This method count how money month does have kpi value."""
+    """Calculate the number of months which are having value."""
     @api.depends(
         'kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june',
         'kpi_july', 'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december'
@@ -74,7 +77,7 @@ class ProjectKPI(models.Model):
             ]
             record.kpi_month_number = sum(1 for val in months if val > 0)
 
-    # Calculate total achievement
+    """Calculate total achievement"""
     @api.depends(
         'kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june',
         'kpi_july', 'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december',
@@ -97,13 +100,13 @@ class ProjectKPI(models.Model):
             else:
                 rec.total_achievement = 0.0
 
-    # Calculate achievement percentage
+    """Calculate achievement percentage"""
     @api.depends('total_achievement')
     def _count_achievement_percent(self):
         for rec in self:
             rec.achievement_percent = round(rec.total_achievement * 100)
 
-    #validation for input values
+    """validation for input values"""
     @api.constrains('target_kpi', 'before_kpi', 'kpi_january', 'kpi_february', 'kpi_march', 'kpi_april', 'kpi_may', 'kpi_june', 'kpi_july', 'kpi_august', 'kpi_september', 'kpi_october', 'kpi_november', 'kpi_december')
     def _validating_inputs(self):
         for record in self:
@@ -143,14 +146,17 @@ class ProjectKPI(models.Model):
             if not record.can_edit_fields:
                 raise AccessError("You do not have permission to modify this project.")
 
+    """Helper method to gain/revoke CRUD access from users"""
     def write(self, vals):
         self.check_user_role()
         return super().write(vals)
 
+    """Helper method to gain/revoke CRUD access from users"""
     def unlink(self):
         self.check_user_role()
         return super().unlink()
 
+    """Helper method to gain/revoke CRUD access from users"""
     def copy(self, default=None):
         self.check_user_role()
         return super().copy(default)

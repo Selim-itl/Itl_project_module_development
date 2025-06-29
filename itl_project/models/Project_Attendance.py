@@ -24,6 +24,7 @@ class ProjectAttendanceSheet(models.Model):
         store=False
     )
 
+    """Computing weather logged in user is Administrator/Leader/Coordinator/normal user"""
     @api.depends('project_id')
     def _compute_can_edit_fields(self):
         for rec in self:
@@ -35,10 +36,12 @@ class ProjectAttendanceSheet(models.Model):
                     (project.project_coordinator and project.project_coordinator.id == user.id)
             )
 
+    """Will get triggered automatically when project_id will be added/changed"""
     @api.onchange('project_id')
     def _onchange_can_edit_fields(self):
         self._compute_can_edit_fields()
 
+    """Setting the can_edit_fields value when the form gets loaded. It is userful in terms of loading the form for the first time. Without this block the value of that filed will always be false when the form get loaded for the first time."""
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
@@ -50,12 +53,12 @@ class ProjectAttendanceSheet(models.Model):
 
     # Block ensuring proper access right
     """Conditionally checking whether the user should have permissions to delete, duplicate, edit"""
-
     def check_user_role(self):
         for record in self:
             if not record.can_edit_fields:
                 raise AccessError("You do not have permission to modify this project.")
 
+    """Helper method to gain/revoke CRUD access from users"""
     def copy(self, default=None):
         self.check_user_role()
         return super().copy(default)
@@ -151,6 +154,7 @@ class ProjectAttendanceLine(models.Model):
         string='Date'
     )
 
+    """Inheriting default create method to extend functionality. Now when a new attendance got recorded a record for attendance report is also get stored."""
     @api.model
     def create(self, vals):
         record = super().create(vals)
@@ -224,6 +228,7 @@ class ProjectAttendanceReportLine(models.Model):
         ('late', 'Late')
     ], string="Status")
 
+    """Create attendance report record by checking existing records availability"""
     @api.model
     def create_from_attendance_line(self, attendance_line):
         existing = self.search([

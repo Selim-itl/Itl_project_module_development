@@ -29,10 +29,12 @@ class Project3W(models.Model):
                     (project.project_coordinator and project.project_coordinator.id == user.id)
             )
 
+    """Will get triggered automatically when project_id will be added/changed"""
     @api.onchange('project_id')
     def _onchange_project_id_update_can_edit(self):
         self._compute_can_edit_fields()
 
+    """Setting the can_edit_fields value when the form gets loaded. It is userful in terms of loading the form for the first time. Without this block the value of that filed will always be false when the form get loaded for the first time."""
     @api.model
     def default_get(self, fields_list):
         res = super().default_get(fields_list)
@@ -48,14 +50,17 @@ class Project3W(models.Model):
             if not record.can_edit_fields:
                 raise AccessError("You do not have permission to modify this project.")
 
+    """Helper method to gain/revoke CRUD access from users"""
     def write(self, vals):
         self.check_user_role()
         return super().write(vals)
 
+    """Helper method to gain/revoke CRUD access from users"""
     def unlink(self):
         self.check_user_role()
         return super().unlink()
 
+    """Helper method to gain/revoke CRUD access from users"""
     def copy(self, default=None):
         self.check_user_role()
         return super().copy(default)

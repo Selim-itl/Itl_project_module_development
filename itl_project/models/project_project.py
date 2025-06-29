@@ -58,7 +58,7 @@ class ProjectProject(models.Model):
         for record in self:
             record.is_project_coordinator = (record.project_coordinator.id == self.env.uid)
 
-    # Method to open KPI form and tree views
+    """Method to open KPI form and tree views"""
     def action_view_kpi(self):
         self.ensure_one()
         user = self.env.user
@@ -67,6 +67,7 @@ class ProjectProject(models.Model):
                 (self.user_id and self.user_id.id == user.id) or
                 (self.project_coordinator and self.project_coordinator.id == user.id)
         )
+        #         can_edit field setting value to can_edit_field form when form is opening for the first time.
         return {
             'type': 'ir.actions.act_window',
             'name': 'KPI',
@@ -79,7 +80,7 @@ class ProjectProject(models.Model):
             },
         }
 
-    # Method to open 3W form and tree views
+    """Method to open 3W form and tree views"""
     def action_view_3w(self):
         self.ensure_one()
         user = self.env.user
@@ -88,6 +89,7 @@ class ProjectProject(models.Model):
                 (self.user_id and self.user_id.id == user.id) or
                 (self.project_coordinator and self.project_coordinator.id == user.id)
         )
+        #         can_edit field setting value to can_edit_field form when form is opening for the first time.
         return {
             'type': 'ir.actions.act_window',
             'name': '3W',
@@ -100,7 +102,7 @@ class ProjectProject(models.Model):
             },
         }
 
-    #Display all task and sub-task of current project
+    """Display all task and sub-task of current project"""
     def action_stat_button_all_tasks(self):
         self.ensure_one()
         return {
@@ -116,7 +118,7 @@ class ProjectProject(models.Model):
             },
         }
 
-    # Method to open all parent tasks
+    """Method to open all parent tasks"""
     def action_stat_button_parent_tasks(self):
         self.ensure_one()
         return {
@@ -133,7 +135,7 @@ class ProjectProject(models.Model):
             },
         }
 
-    # Method to open attendance sheet
+    """Method to open attendance sheet"""
     def action_stat_button_attendance(self):
         self.ensure_one()
         user = self.env.user
@@ -142,6 +144,7 @@ class ProjectProject(models.Model):
                 (self.user_id and self.user_id.id == user.id) or
                 (self.project_coordinator and self.project_coordinator.id == user.id)
         )
+        #         can_edit field setting value to can_edit_field form when form is opening for the first time.
         return {
             'type': 'ir.actions.act_window',
             'name': 'Attendance',
@@ -168,12 +171,12 @@ class ProjectProject(models.Model):
 
 
 
-    # Method to prevent error when clicking dummy stat button
+    """Method to prevent error when clicking dummy stat button"""
     def action_stat_button_method(self):
         for rec in self:
             print("Method executed successfully!")
 
-    #compute project stages
+    """compute project stages"""
     @api.depends('task_ids.task_stages')
     def _compute_project_stages(self):
         for rec in self:
@@ -187,26 +190,26 @@ class ProjectProject(models.Model):
             else:
                 rec.project_stages = "in_progress"
 
-    #compute not started tasks number
+    """compute not started tasks number"""
     @api.depends('task_ids.task_stages')
     def _compute_not_started_tasks(self):
         for rec in self:
             rec.not_started_task = len(rec.task_ids.filtered(lambda task: task.task_stages == "not_started"))
 
-    #compute in-progress tasks number
+    """compute in-progress tasks number"""
     @api.depends('task_ids.task_stages')
     def _compute_inprogress_tasks(self):
         for rec in self:
             rec.in_progress_task = len(rec.task_ids.filtered(lambda task: task.task_stages == "in_progress"))
 
-    #completed tasks count
+    """completed tasks count"""
     @api.depends('task_ids.task_stages')
     def _compute_completed_tasks(self):
         for project in self:
             project.completed_task = len(project.task_ids.filtered(lambda task: task.task_stages == 'completed'))
 
 
-    #counting working days
+    """counting working days"""
     @api.depends('date_start', 'date')
     def _compute_working_days_duration(self):
         for project in self:
@@ -229,7 +232,7 @@ class ProjectProject(models.Model):
             else:
                 project.days_count = 0
 
-    #calculating project progress
+    """calculating project progress"""
     @api.depends('task_ids.task_progress')
     def _compute_project_progress(self):
         for project in self:
@@ -238,7 +241,7 @@ class ProjectProject(models.Model):
             count = len(top_tasks)
             project.project_progress = round(total / count, 2) if count else 0.0
 
-    # #providing button to kanban for open project settings. This is getting triggered by clicking on project display name.
+    """providing button to kanban for open project settings. This is getting triggered by clicking on project display name."""
     def action_open_form_view(self):
         self.ensure_one()  # Ensure only one record is processed
         return {
@@ -324,7 +327,7 @@ class ProjectTask(models.Model):
     # Block ensuring proper access right on crud
 
 
-    #Ensures only project members are appears in task assign to form.
+    """Ensures only project members are appears in task assign to form."""
     @api.depends('project_id', 'parent_id')
     def _compute_allowed_user_ids(self):
         for task in self:
@@ -333,7 +336,7 @@ class ProjectTask(models.Model):
             else:
                 task.allowed_user_ids = self.env['res.users']
 
-    # Check progress value and change stage if progress is 100
+    """Check progress value and change stage if progress is 100"""
     @api.depends('sub_task_progress')
     def _check_and_change_stage(self):
         for rec in self:
@@ -352,14 +355,14 @@ class ProjectTask(models.Model):
                 else:
                     rec.task_stages = 'in_progress'
 
-    #restrict parent task deletion before deleting its sub task/tasks
+    """restrict parent task deletion before deleting its sub task/tasks"""
     def unlink(self):
         for task in self:
             if task.child_ids:
                 raise ValidationError(_("You cannot delete a parent task that has child tasks. Please delete its child tasks first."))
         return super(ProjectTask, self).unlink()
 
-    #setting value to task and sub-task progress based on states
+    """setting value to task and sub-task progress based on states"""
     @api.onchange('task_stages')
     def _stage_based_progress(self):
         for rec in self:
@@ -372,14 +375,14 @@ class ProjectTask(models.Model):
                 if not rec.parent_id:
                     rec.task_progress = 100
 
-    #validating user input to accept number between 0 and 100
+    """validating user input to accept number between 0 and 100"""
     @api.constrains('sub_task_progress')
     def _check_sub_task_progress_range(self):
         for record in self:
             if not (0 <= record.sub_task_progress <= 100):
                 raise ValidationError("Progress must be between 0 and 100")
 
-    # Ensuring sub-task member who are in parent task (creating time)
+    """Ensuring sub-task member who are in parent task (creating time)"""
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -391,7 +394,7 @@ class ProjectTask(models.Model):
         return super().create(vals_list)
 
 
-    # Ensuring sub task member who are in parent task (editing time)
+    """Ensuring sub-task member who are in parent task (editing time)"""
     def write(self, vals):
         for task in self:
             if 'user_ids' in vals and task.parent_id:
@@ -401,10 +404,7 @@ class ProjectTask(models.Model):
                         raise ValidationError("Sub-task assignees must be selected from parent task's assignees.")
         return super().write(vals)
 
-
-
-
-    #calculating working days by excluding weekend
+    """calculating working days by excluding weekend"""
     @api.depends('task_start_date', 'date_deadline')
     def _compute_working_days(self):
         for task in self:
@@ -422,7 +422,7 @@ class ProjectTask(models.Model):
             else:
                 task.working_days = 0
 
-    #calculating task progress from sub-tasks and setting task status based on task progress
+    """calculating task progress from sub-tasks and setting task status based on task progress"""
     @api.depends('child_ids.sub_task_progress')
     def _onchange_task_progress(self):
         for task in self:
