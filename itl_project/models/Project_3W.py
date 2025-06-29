@@ -1,4 +1,5 @@
 from odoo import fields, models, api
+from odoo.exceptions import AccessError
 
 class Project3W(models.Model):
     _name = "project.three.w"
@@ -39,3 +40,24 @@ class Project3W(models.Model):
             res['can_edit_fields'] = self.env.context.get('default_can_edit_fields')
         return res
     # Block is been using for track who can edit
+
+    # Block ensuring proper access right
+    """Conditionally checking whether the user should have permissions to delete, duplicate, edit"""
+    def check_user_role(self):
+        for record in self:
+            if not record.can_edit_fields:
+                raise AccessError("You do not have permission to modify this project.")
+
+    def write(self, vals):
+        self.check_user_role()
+        return super().write(vals)
+
+    def unlink(self):
+        self.check_user_role()
+        return super().unlink()
+
+    def copy(self, default=None):
+        self.check_user_role()
+        return super().copy(default)
+
+    # Block ensuring proper access right

@@ -2,11 +2,9 @@
 from email.policy import default
 
 from odoo import models, fields, api,_
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, AccessError
 from datetime import timedelta
 import logging
-
-_logger = logging.getLogger(__name__)
 
 class ProjectProject(models.Model):
     _inherit = 'project.project'
@@ -255,6 +253,7 @@ class ProjectTask(models.Model):
     _inherit = 'project.task'
     _order = 'sequence, id'
 
+    active = fields.Boolean(default=True, tracking=True)
     task_start_date = fields.Date(string='Start date')
     user_ids = fields.Many2many(string='Assigned To')
     # Works with stage calculation
@@ -294,6 +293,35 @@ class ProjectTask(models.Model):
                     (project.project_coordinator and project.project_coordinator.id == user.id)
             )
     # Block is been using for track who can edit
+
+    # Block ensuring proper access right on crud
+    """Conditionally checking whether the user should have permissions to delete, duplicate, edit"""
+    def check_user_role(self):
+        for record in self:
+            if not record.can_edit_fields:
+                raise AccessError("You do not have permission to modify this project.")
+
+
+    """Disable archive button for normal users"""
+    def action_archive(self):
+        for rec in self:
+            if not rec.can_edit_fields:
+                raise AccessError(_("You do not have permission to archive this task."))
+        return super(ProjectTask, self).action_archive()
+
+    """Disable delete button for normal users"""
+    @api.ondelete(at_uninstall=False)
+    def _check_ondelete(self):
+        for rec in self:
+            if not rec.can_edit_fields:
+                raise AccessError("No permission to delete.")
+
+    """Disable duplicate/copy button for normal users"""
+    def copy(self, default=None):
+        self.check_user_role()
+        return super(ProjectTask, self).copy(default)
+
+    # Block ensuring proper access right on crud
 
 
     #Ensures only project members are appears in task assign to form.

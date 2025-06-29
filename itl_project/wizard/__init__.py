@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from . import project_create_wizard
+from . import project_task_wizard
