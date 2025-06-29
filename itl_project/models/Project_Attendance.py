@@ -1,7 +1,7 @@
 from email.policy import default
 
 from odoo import models, fields, api,_
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, AccessError
 
 class ProjectAttendanceSheet(models.Model):
     _name = 'project.attendance.sheet'
@@ -48,24 +48,39 @@ class ProjectAttendanceSheet(models.Model):
 
     # Block is been using for track who can edit
 
+    # Block ensuring proper access right
+    """Conditionally checking whether the user should have permissions to delete, duplicate, edit"""
+
+    def check_user_role(self):
+        for record in self:
+            if not record.can_edit_fields:
+                raise AccessError("You do not have permission to modify this project.")
+
+    def copy(self, default=None):
+        self.check_user_role()
+        return super().copy(default)
+
+    # Block ensuring proper access right
+
     """Delete previous records of attendance report when edit attendance sheet and store updated record to attendance report."""
+    """Here create access control is also implemented"""
     def write(self, vals):
+        self.check_user_role()  # Permission check first
         result = super().write(vals)
         for sheet in self:
-            # 🧹 Step 1: Delete old report lines for this project + date
             self.env['project.attendance.report.line'].search([
                 ('project_id', '=', sheet.project_id.id),
                 ('attendance_date', '=', sheet.attendance_date)
             ]).unlink()
 
-            # 🔁 Step 2: Recreate report lines based on current attendance lines
             for line in sheet.attendance_line_ids:
                 self.env['project.attendance.report.line'].create_from_attendance_line(line)
-
         return result
 
     """If a attendance record got deleted on the same date all the attendance report record of the same date will also deleted from here."""
+    """Here delete access control also implemented """
     def unlink(self):
+        self.check_user_role()  # Permission check first
         report_line_model = self.env['project.attendance.report.line']
         for sheet in self:
             report_lines = report_line_model.search([
