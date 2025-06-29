@@ -16,7 +16,7 @@
                             <field name="attendance_date" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                         </group>
                         <group>
-                            <field name="attendance_date_status"/>
+                            <field name="attendance_date_status" attrs="{'readonly': [('can_edit_fields', '=', False)]}"/>
                         </group>
                     </group>
                     <field name="attendance_line_ids" attrs="{'invisible':[('attendance_date_status','in',('cancelled', 'weekend'))], 'readonly': [('can_edit_fields', '=', False)]}">

@@ -24,7 +24,7 @@ class Project3W(models.Model):
             project = rec.project_id
             rec.can_edit_fields = bool(project) and (
                     user.has_group('project.group_project_manager') or
-                    (project.user_id and project.user_id.id == user.id) or
+                    (project.user_id and project.user_id.id == user.id)  or
                     (project.project_coordinator and project.project_coordinator.id == user.id)
             )
 
